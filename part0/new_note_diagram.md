@@ -5,6 +5,10 @@ sequenceDiagram
     participant browser
     participant server
 
+    browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/notes
+    activate server
+    server-->>browser: HTML document
+    deactivate server
 
     browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/main.css
     activate server
@@ -38,7 +42,7 @@ sequenceDiagram
     Note right of browser: Body of the request: note=HTML is easy
 
     Note left of server: The server adds the new note to the list of notes
-    server-->>-browser: HTTP redirect to /exampleapp/new_note
+    server-->>-browser: HTTP redirect to /exampleapp/notes
 
     Note over browser, server: After which page is loaded according to the diagram provided in the assignment
 ```
