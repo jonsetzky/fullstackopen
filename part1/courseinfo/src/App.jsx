@@ -4,13 +4,19 @@ const Header = ({ course }) => {
   return <h1>{course}</h1>;
 };
 
+const Part = ({ name, exercises }) => {
+  return (
+    <p>
+      {name} {exercises}
+    </p>
+  );
+};
+
 const Content = ({ parts }) => {
   return (
     <>
       {parts.map(([name, exercises]) => (
-        <p>
-          {name} {exercises}
-        </p>
+        <Part name={name} exercises={exercises} />
       ))}
     </>
   );
