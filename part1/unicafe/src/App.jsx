@@ -5,14 +5,21 @@ const Statistics = ({ good, neutral, bad }) => {
   const average = (good - bad) / total;
   const positive = (good / total) * 100;
 
-  return (
-    <>
-      <h1>statistics</h1>
+  var body = <p>No feedback given</p>;
+
+  if (total > 0)
+    body = (
       <p>
         total {total} <br />
         average {isNaN(average) ? 0 : average.toFixed(2)} <br />
         positive {isNaN(positive) ? 0 : positive.toFixed(2)} %
       </p>
+    );
+
+  return (
+    <>
+      <h1>statistics</h1>
+      {body}
     </>
   );
 };
