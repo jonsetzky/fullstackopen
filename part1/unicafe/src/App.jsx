@@ -1,14 +1,27 @@
 import { useState } from "react";
 
+const Statistics = ({ good, neutral, bad }) => {
+  const total = good + neutral + bad;
+  const average = (good - bad) / total;
+  const positive = (good / total) * 100;
+
+  return (
+    <>
+      <h1>statistics</h1>
+      <p>
+        total {total} <br />
+        average {isNaN(average) ? 0 : average.toFixed(2)} <br />
+        positive {isNaN(positive) ? 0 : positive.toFixed(2)} %
+      </p>
+    </>
+  );
+};
+
 const App = () => {
   // tallenna napit omaan tilaansa
   const [good, setGood] = useState(0);
   const [neutral, setNeutral] = useState(0);
   const [bad, setBad] = useState(0);
-
-  const total = good + neutral + bad;
-  const average = (good - bad) / total;
-  const positive = (good / total) * 100;
 
   return (
     <div>
@@ -22,12 +35,7 @@ const App = () => {
       <button onClick={() => setBad(bad + 1)}>bad</button>
       <span> {bad}</span>
       <br />
-      <h1>statistics</h1>
-      <p>
-        total {total} <br />
-        average {isNaN(average) ? 0 : average.toFixed(2)} <br />
-        positive {isNaN(positive) ? 0 : positive.toFixed(2)} %
-      </p>
+      <Statistics good={good} neutral={neutral} bad={bad} />
     </div>
   );
 };
