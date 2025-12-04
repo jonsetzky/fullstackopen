@@ -1,5 +1,40 @@
 import { useState } from "react";
 
+const SearchField = ({ setSearchFilter }) => (
+  <div>
+    filter shown with{" "}
+    <input onChange={(event) => setSearchFilter(event.target.value)} />
+  </div>
+);
+
+const PersonForm = ({ addPerson, setNewName, setNewNumber }) => (
+  <form>
+    <div>
+      name: <input onChange={(event) => setNewName(event.target.value)} />
+      <br />
+      number: <input onChange={(event) => setNewNumber(event.target.value)} />
+    </div>
+    <div>
+      <button onClick={addPerson}>add</button>
+    </div>
+  </form>
+);
+
+const PersonList = ({ persons, searchFilter }) => (
+  <div>
+    {persons
+      .filter((person) =>
+        person.name.toLowerCase().includes(searchFilter.toLowerCase())
+      )
+      .map((person) => (
+        <span key={person.name}>
+          {person.name} {person.number}
+          <br />
+        </span>
+      ))}
+  </div>
+);
+
 const App = () => {
   const [persons, setPersons] = useState([
     { name: "Arto Hellas", number: "040-123456" },
@@ -30,31 +65,15 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      filter shown with{" "}
-      <input onChange={(event) => setSearchFilter(event.target.value)} />
+      <SearchField setSearchFilter={setSearchFilter} />
       <h2>Add a new</h2>
-      <form>
-        <div>
-          name: <input onChange={(event) => setNewName(event.target.value)} />
-          <br />
-          number:{" "}
-          <input onChange={(event) => setNewNumber(event.target.value)} />
-        </div>
-        <div>
-          <button onClick={addPerson}>add</button>
-        </div>
-      </form>
+      <PersonForm
+        addPerson={addPerson}
+        setNewName={setNewName}
+        setNewNumber={setNewNumber}
+      />
       <h2>Numbers</h2>
-      {persons
-        .filter((person) =>
-          person.name.toLowerCase().includes(searchFilter.toLowerCase())
-        )
-        .map((person) => (
-          <span key={person.name}>
-            {person.name} {person.number}
-            <br />
-          </span>
-        ))}
+      <PersonList persons={persons} searchFilter={searchFilter} />
     </div>
   );
 };
