@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import personService from "./services/persons.js";
 
 const SearchField = ({ setSearchFilter }) => (
   <div>
@@ -43,9 +43,7 @@ const App = () => {
   const [searchFilter, setSearchFilter] = useState("");
 
   useEffect(() => {
-    axios.get("http://localhost:3001/persons").then((response) => {
-      setPersons(response.data);
-    });
+    personService.getAll().then(setPersons);
   }, []);
 
   const addPerson = (event) => {
@@ -56,12 +54,17 @@ const App = () => {
 
     if (persons.some((person) => person.name === newNameTrimmed))
       return alert(`${newNameTrimmed} is already in the phonebook`);
-    setPersons(
-      [...persons].concat({
-        name: newNameTrimmed,
-        number: newNumber,
-      })
-    );
+
+    personService
+      .create({ name: newNameTrimmed, number: newNumber })
+      .then(() => {
+        setPersons(
+          [...persons].concat({
+            name: newNameTrimmed,
+            number: newNumber,
+          })
+        );
+      });
   };
 
   return (
