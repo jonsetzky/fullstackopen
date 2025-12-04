@@ -1,52 +1,8 @@
 import { useEffect, useState } from "react";
 import personService from "./services/persons.js";
-
-const SearchField = ({ setSearchFilter }) => (
-  <div>
-    filter shown with{" "}
-    <input onChange={(event) => setSearchFilter(event.target.value)} />
-  </div>
-);
-
-const PersonForm = ({ addPerson, setNewName, setNewNumber }) => (
-  <form>
-    <div>
-      name: <input onChange={(event) => setNewName(event.target.value)} />
-      <br />
-      number: <input onChange={(event) => setNewNumber(event.target.value)} />
-    </div>
-    <div>
-      <button onClick={addPerson}>add</button>
-    </div>
-  </form>
-);
-
-const PersonList = ({ persons, setPersons, searchFilter }) => (
-  <div>
-    {persons
-      .filter((person) =>
-        person.name.toLowerCase().includes(searchFilter.toLowerCase())
-      )
-      .map((person) => (
-        <span key={person.name}>
-          {person.name} {person.number}
-          <button
-            onClick={() => {
-              confirm(`Are you sure you want to delete ${person.name}?`) &&
-                personService
-                  .remove(person.id)
-                  .then(() =>
-                    setPersons(persons.filter((p) => p.id !== person.id))
-                  );
-            }}
-          >
-            delete
-          </button>
-          <br />
-        </span>
-      ))}
-  </div>
-);
+import SearchField from "./components/SearchForm.jsx";
+import PersonForm from "./components/PersonForm.jsx";
+import PersonList from "./components/PersonList.jsx";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
