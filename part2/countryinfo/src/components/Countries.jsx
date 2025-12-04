@@ -1,6 +1,9 @@
-import React from "react";
+import { useEffect, useState } from "react";
+import weatherService from "../services/weather.js";
 
 export const Countries = ({ countries, filter, setFilter }) => {
+  const [weather, setWeather] = useState(null);
+
   const DETAIL_FIELDS = {
     tld: "Top-Level Domain",
     independent: "Independent",
@@ -14,6 +17,21 @@ export const Countries = ({ countries, filter, setFilter }) => {
   const matchingCountries = countries.filter((country) =>
     country.name.common.toLowerCase().includes(filter.toLowerCase())
   );
+  const exactMatch = matchingCountries.find(
+    (country) => country.name.common.toLowerCase() === filter.toLowerCase()
+  );
+  const country = exactMatch || matchingCountries[0];
+  useEffect(() => {
+    const capitalLatLng = country?.capitalInfo?.latlng || undefined;
+    if (
+      capitalLatLng === undefined ||
+      (matchingCountries.length > 1 && !exactMatch)
+    )
+      return;
+    weatherService
+      .getAtLatLng(...capitalLatLng)
+      .then((data) => setWeather(data));
+  }, [country, exactMatch, matchingCountries]);
 
   if (matchingCountries.length === 0) {
     return <div>No matches found</div>;
@@ -23,9 +41,6 @@ export const Countries = ({ countries, filter, setFilter }) => {
     return <div>Too many matches, specify another filter</div>;
   }
 
-  const exactMatch = matchingCountries.find(
-    (country) => country.name.common.toLowerCase() === filter.toLowerCase()
-  );
   if (matchingCountries.length > 1 && !exactMatch)
     return (
       <div>
@@ -37,8 +52,6 @@ export const Countries = ({ countries, filter, setFilter }) => {
         ))}
       </div>
     );
-
-  const country = exactMatch || matchingCountries[0];
 
   const createDetailRow = (label, value) => {
     value = country[value];
@@ -108,6 +121,25 @@ export const Countries = ({ countries, filter, setFilter }) => {
         alt={`Flag of ${country.name.common}`}
         width="200"
       />
+      <h3>Weather in {country.capital}</h3>
+      <p>
+        Temperature:{" "}
+        {weather ? `${weather.current.temperature_2m} °C` : "Loading..."}
+        <br />
+        Wind: {weather ? `${weather.current.wind_speed_10m} m/s` : "Loading..."}
+        <br />
+        <img
+          src={
+            weather
+              ? weatherService.getIconUrlForWeatherCode(
+                  weather.current.weather_code,
+                  true
+                )
+              : ""
+          }
+          alt="Weather icon"
+        />
+      </p>
     </div>
   );
 };
