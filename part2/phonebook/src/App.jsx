@@ -64,8 +64,27 @@ const App = () => {
     // handle multiple spaces, leading/trailing spaces and case sensitivity
     const newNameTrimmed = newName.replaceAll(/\s+/g, " ").trim();
 
-    if (persons.some((person) => person.name === newNameTrimmed))
-      return alert(`${newNameTrimmed} is already in the phonebook`);
+    const existingPerson = persons.find(
+      (person) => person.name === newNameTrimmed
+    );
+    if (existingPerson !== undefined)
+      return (
+        confirm(
+          `${newNameTrimmed} is already in the phonebook. Replace the old number with a new one?`
+        ) &&
+        personService
+          .update(existingPerson.id, {
+            name: newNameTrimmed,
+            number: newNumber,
+          })
+          .then((updatedPerson) => {
+            setPersons(
+              persons.map((person) =>
+                person.id !== updatedPerson.id ? person : updatedPerson
+              )
+            );
+          })
+      );
 
     personService
       .create({ name: newNameTrimmed, number: newNumber })
