@@ -3,16 +3,30 @@ import personService from "./services/persons.js";
 import SearchField from "./components/SearchForm.jsx";
 import PersonForm from "./components/PersonForm.jsx";
 import PersonList from "./components/PersonList.jsx";
+import Notification from "./components/Notification.jsx";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [searchFilter, setSearchFilter] = useState("");
+  const [notification, setNotification] = useState(null);
 
   useEffect(() => {
     personService.getAll().then(setPersons);
   }, []);
+
+  const showNotification = (message, isError = false) => {
+    const NOTIFICATION_TIMEOUT = 5000;
+
+    clearTimeout(notification?.lastTimeout);
+    const lastTimeout = setTimeout(
+      () => setNotification(null),
+      NOTIFICATION_TIMEOUT
+    );
+
+    setNotification({ message, isError, lastTimeout });
+  };
 
   const addPerson = (event) => {
     event.preventDefault(); // disable form submission
@@ -39,6 +53,7 @@ const App = () => {
                 person.id !== updatedPerson.id ? person : updatedPerson
               )
             );
+            showNotification(`Updated ${updatedPerson.name}`);
           })
       );
 
@@ -51,12 +66,17 @@ const App = () => {
             number: newNumber,
           })
         );
+        showNotification(`Added ${newNameTrimmed}`);
       });
   };
 
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification
+        message={notification?.message}
+        isError={notification?.isError}
+      />
       <SearchField setSearchFilter={setSearchFilter} />
       <h2>Add a new</h2>
       <PersonForm
@@ -69,6 +89,7 @@ const App = () => {
         persons={persons}
         setPersons={setPersons}
         searchFilter={searchFilter}
+        showNotification={showNotification}
       />
     </div>
   );

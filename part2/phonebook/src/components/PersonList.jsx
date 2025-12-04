@@ -1,6 +1,11 @@
 import personService from "../services/persons.js";
 
-const PersonList = ({ persons, setPersons, searchFilter }) => (
+const PersonList = ({
+  persons,
+  setPersons,
+  searchFilter,
+  showNotification,
+}) => (
   <div>
     {persons
       .filter((person) =>
@@ -17,6 +22,7 @@ const PersonList = ({ persons, setPersons, searchFilter }) => (
                   .then(() =>
                     setPersons(persons.filter((p) => p.id !== person.id))
                   );
+              showNotification(`Deleted ${person.name}`);
             }}
           >
             delete
