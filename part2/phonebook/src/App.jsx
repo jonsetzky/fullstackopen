@@ -15,7 +15,17 @@ const App = () => {
           <button
             onClick={(event) => {
               event.preventDefault(); // disable form submission
-              setPersons([...persons].concat({ name: newName }));
+
+              // handle multiple spaces, leading/trailing spaces and case sensitivity
+              const newNameTrimmed = newName.replaceAll(/\s+/g, " ").trim();
+
+              if (persons.some((person) => person.name === newNameTrimmed))
+                return alert(`${newNameTrimmed} is already in the phonebook`);
+              setPersons(
+                [...persons].concat({
+                  name: newNameTrimmed,
+                })
+              );
             }}
           >
             add
