@@ -21,7 +21,7 @@ const PersonForm = ({ addPerson, setNewName, setNewNumber }) => (
   </form>
 );
 
-const PersonList = ({ persons, searchFilter }) => (
+const PersonList = ({ persons, setPersons, searchFilter }) => (
   <div>
     {persons
       .filter((person) =>
@@ -30,6 +30,18 @@ const PersonList = ({ persons, searchFilter }) => (
       .map((person) => (
         <span key={person.name}>
           {person.name} {person.number}
+          <button
+            onClick={() => {
+              confirm(`Are you sure you want to delete ${person.name}?`) &&
+                personService
+                  .remove(person.id)
+                  .then(() =>
+                    setPersons(persons.filter((p) => p.id !== person.id))
+                  );
+            }}
+          >
+            delete
+          </button>
           <br />
         </span>
       ))}
@@ -78,7 +90,11 @@ const App = () => {
         setNewNumber={setNewNumber}
       />
       <h2>Numbers</h2>
-      <PersonList persons={persons} searchFilter={searchFilter} />
+      <PersonList
+        persons={persons}
+        setPersons={setPersons}
+        searchFilter={searchFilter}
+      />
     </div>
   );
 };
