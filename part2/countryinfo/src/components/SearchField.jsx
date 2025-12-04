@@ -1,7 +1,10 @@
-const SearchField = ({ setSearchFilter }) => (
+const SearchField = ({ setSearchFilter, value }) => (
   <div>
     find countries{" "}
-    <input onChange={(event) => setSearchFilter(event.target.value)} />
+    <input
+      value={value}
+      onChange={(event) => setSearchFilter(event.target.value)}
+    />
   </div>
 );
 export default SearchField;

@@ -13,8 +13,8 @@ const App = () => {
 
   return (
     <div>
-      <SearchField setSearchFilter={setFilter} />
-      <Countries countries={countries} filter={filter} />
+      <SearchField value={filter} setSearchFilter={setFilter} />
+      <Countries countries={countries} filter={filter} setFilter={setFilter} />
     </div>
   );
 };

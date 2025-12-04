@@ -1,6 +1,6 @@
 import React from "react";
 
-export const Countries = ({ countries, filter }) => {
+export const Countries = ({ countries, filter, setFilter }) => {
   const DETAIL_FIELDS = {
     tld: "Top-Level Domain",
     independent: "Independent",
@@ -30,7 +30,10 @@ export const Countries = ({ countries, filter }) => {
     return (
       <div>
         {matchingCountries.map((country) => (
-          <div key={country.name.common}>{country.name.common}</div>
+          <div key={country.name.common}>
+            {country.name.common}{" "}
+            <button onClick={() => setFilter(country.name.common)}>Show</button>
+          </div>
         ))}
       </div>
     );
