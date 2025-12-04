@@ -9,6 +9,7 @@ const App = () => {
   ]);
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
+  const [searchFilter, setSearchFilter] = useState("");
 
   const addPerson = (event) => {
     event.preventDefault(); // disable form submission
@@ -29,6 +30,9 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      filter shown with{" "}
+      <input onChange={(event) => setSearchFilter(event.target.value)} />
+      <h2>Add a new</h2>
       <form>
         <div>
           name: <input onChange={(event) => setNewName(event.target.value)} />
@@ -41,12 +45,16 @@ const App = () => {
         </div>
       </form>
       <h2>Numbers</h2>
-      {persons.map((person) => (
-        <span key={person.name}>
-          {person.name} {person.number}
-          <br />
-        </span>
-      ))}
+      {persons
+        .filter((person) =>
+          person.name.toLowerCase().includes(searchFilter.toLowerCase())
+        )
+        .map((person) => (
+          <span key={person.name}>
+            {person.name} {person.number}
+            <br />
+          </span>
+        ))}
     </div>
   );
 };
