@@ -9,14 +9,23 @@ const App = () => {
       <h2>Phonebook</h2>
       <form>
         <div>
-          name: <input />
+          name: <input onChange={(event) => setNewName(event.target.value)} />
         </div>
         <div>
-          <button type="submit">add</button>
+          <button
+            onClick={(event) => {
+              event.preventDefault(); // disable form submission
+              setPersons([...persons].concat({ name: newName }));
+            }}
+          >
+            add
+          </button>
         </div>
       </form>
       <h2>Numbers</h2>
-      ...
+      {persons.map((person) => (
+        <p key={person.name}>{person.name}</p>
+      ))}
     </div>
   );
 };
