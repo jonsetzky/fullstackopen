@@ -55,6 +55,14 @@ const App = () => {
             );
             showNotification(`Updated ${updatedPerson.name}`);
           })
+          .catch((error) => {
+            if (error?.response.status !== 404) throw error;
+
+            showNotification(
+              `Person ${newNameTrimmed} has already been removed from the server`,
+              true
+            );
+          })
       );
 
     personService
