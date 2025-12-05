@@ -25,8 +25,24 @@ let persons = [
   },
 ];
 
+const handlePersons = (id) => {
+  if (id)
+    return persons.find((person) => {
+      return person.id === id;
+    });
+  return persons;
+};
+
 app.get("/api/persons", (req, res) => {
-  res.json(persons);
+  res.json(handlePersons());
+});
+app.get("/api/persons/:id", (req, res) => {
+  const result = handlePersons(req.params.id);
+  if (!result) {
+    res.status(404).send("person not found");
+  } else {
+    res.json(result);
+  }
 });
 
 app.get("/info", (req, res) => {
