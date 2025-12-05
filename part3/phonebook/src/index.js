@@ -49,10 +49,10 @@ app.get("/api/persons", (req, res) => {
 app.get("/api/persons/:id", (req, res) => {
   const result = getPersons(req.params.id);
   if (!result) {
-    res.status(404).send("person not found");
-  } else {
-    res.json(result);
+    return res.status(404).json({ error: "person not found" });
   }
+
+  res.json(result);
 });
 app.delete("/api/persons/:id", (req, res) => {
   const id = req.params.id;
@@ -64,6 +64,21 @@ app.post("/api/persons", express.json(), (req, res) => {
     ...req.body,
     id: generateId(),
   };
+
+  if (!newPerson.name || !newPerson.number) {
+    return res.status(400).json({ error: "name or number is missing" });
+  }
+
+  if (persons.find((person) => person.name === newPerson.name)) {
+    return res.status(400).json({ error: "name must be unique" });
+  }
+
+  if (
+    typeof newPerson.name !== "string" ||
+    typeof newPerson.number !== "string"
+  ) {
+    return res.status(400).json({ error: "name and number must be strings" });
+  }
 
   persons = persons.concat(newPerson);
   res.json(newPerson);
