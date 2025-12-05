@@ -1,0 +1,25 @@
+{
+  "name": "phonebook",
+  "version": "1.0.0",
+  "description": "Phonebook backend",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js",
+    "test": "echo \"no test command\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jonsetzky/fullstackopen.git"
+  },
+  "author": "jonsetzky",
+  "license": "UNLICENSED",
+  "private": true,
+  "bugs": {
+    "url": "https://github.com/jonsetzky/fullstackopen/issues"
+  },
+  "homepage": "https://github.com/jonsetzky/fullstackopen#readme",
+  "dependencies": {
+    "express": "^5.2.1"
+  }
+}
