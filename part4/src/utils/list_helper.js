@@ -13,6 +13,14 @@ const favoriteBlog = (blogs) => {
   );
 };
 
+// returns the author who has written the most blogs
+const mostBlogs = (blogs) => {
+  return {
+    author: "Dummy Author",
+    blogs: 100,
+  };
+};
+
 module.exports = {
   dummy,
   totalLikes,
