@@ -5,6 +5,13 @@ const cors = require("cors");
 var morgan = require("morgan");
 const mongoose = require("mongoose");
 
+const {
+  addPerson,
+  getAllPersons,
+  getPersonById,
+  deletePerson,
+} = require("./mongo.js");
+
 // this fixes querySrv problem with mongoose
 // https://www.mongodb.com/community/forums/t/error-querysrv-econnrefused-mongodb/259042
 require("node:dns/promises").setServers(["1.1.1.1"]);
@@ -39,29 +46,6 @@ app.use(
   }),
 );
 
-let persons = [
-  {
-    id: "1",
-    name: "Arto Hellas",
-    number: "041-123456",
-  },
-  {
-    id: "2",
-    name: "Ada Lovelace",
-    number: "39-44-5323523",
-  },
-  {
-    id: "3",
-    name: "Dan Abramov",
-    number: "12-43-234345",
-  },
-  {
-    id: "4",
-    name: "Mary Poppendieck",
-    number: "39-23-6423122",
-  },
-];
-
 const generateId = () => {
   let id = Math.floor(Math.random() * 10000).toString();
   while (persons.find((person) => person.id === id)) {
@@ -70,31 +54,29 @@ const generateId = () => {
   return id;
 };
 
-const getPersons = (id) => {
-  if (id)
-    return persons.find((person) => {
-      return person.id === id;
+app.get("/api/persons", async (req, res) => {
+  res.json(await getAllPersons());
+});
+app.get("/api/persons/:id", async (req, res) => {
+  await getPersonById(req.params.id)
+    .then((persons) => {
+      const person = persons[0];
+      if (!person) {
+        return res.status(404).json({ error: "person not found" });
+      }
+      res.json(person);
+    })
+    .catch((err) => {
+      if (err.name === "CastError")
+        return res.status(400).json({ error: "invalid ID" });
+      res.status(500).json({ error: "internal server error" });
     });
-  return persons;
-};
-
-app.get("/api/persons", (req, res) => {
-  res.json(getPersons());
 });
-app.get("/api/persons/:id", (req, res) => {
-  const result = getPersons(req.params.id);
-  if (!result) {
-    return res.status(404).json({ error: "person not found" });
-  }
-
-  res.json(result);
-});
-app.delete("/api/persons/:id", (req, res) => {
-  const id = req.params.id;
-  persons = [...persons].filter((person) => person.id !== id);
+app.delete("/api/persons/:id", async (req, res) => {
+  await deletePerson(req.params.id);
   res.end();
 });
-app.post("/api/persons", express.json(), (req, res) => {
+app.post("/api/persons", express.json(), async (req, res) => {
   const newPerson = {
     ...req.body,
     id: generateId(),
@@ -115,8 +97,7 @@ app.post("/api/persons", express.json(), (req, res) => {
     return res.status(400).json({ error: "name and number must be strings" });
   }
 
-  persons = persons.concat(newPerson);
-  res.json(newPerson);
+  res.json(await addPerson(newPerson.name, newPerson.number));
 });
 
 const PORT = process.env.PORT || 3001;

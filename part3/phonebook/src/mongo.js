@@ -15,6 +15,10 @@ const getAllPersons = async () => {
   return await Person.find({});
 };
 
+const getPersonById = async (id) => {
+  return await Person.find({ _id: id });
+};
+
 const addPerson = async (name, number) => {
   const person = new Person({
     name: name,
@@ -23,12 +27,17 @@ const addPerson = async (name, number) => {
 
   await person.save();
   console.log(`added ${name} number ${number} to phonebook`);
+  return person;
 };
 
-const name = process.argv[2];
-const number = process.argv[3];
+const deletePerson = async (id) => {
+  await Person.findByIdAndRemove(id);
+};
 
-(async () => {
+async function main() {
+  const name = process.argv[2];
+  const number = process.argv[3];
+
   const mongodb_url = process.env.MONGODB_URL;
   mongoose.set("strictQuery", false);
   await mongoose.connect(mongodb_url, { family: 4 });
@@ -47,4 +56,15 @@ const number = process.argv[3];
 
   await addPerson(name, number);
   process.exit(0);
-})();
+}
+
+if (require.main === module) {
+  main();
+}
+
+module.exports = {
+  getAllPersons,
+  addPerson,
+  getPersonById,
+  deletePerson,
+};
