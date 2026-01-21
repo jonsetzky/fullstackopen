@@ -6,7 +6,12 @@ const mongoose = require("mongoose");
 require("node:dns/promises").setServers(["1.1.1.1"]);
 
 const personSchema = new mongoose.Schema({
-  name: String,
+  name: {
+    type: String,
+    minLength: 3,
+    required: true,
+    unique: true,
+  },
   number: String,
 });
 const Person = mongoose.model("Person", personSchema);
@@ -41,6 +46,7 @@ const deletePerson = async (id) => {
 const updatePerson = async (id, newObject) => {
   return await Person.findByIdAndUpdate(id, newObject, {
     new: true,
+    runValidators: true,
   });
 };
 

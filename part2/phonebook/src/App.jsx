@@ -70,6 +70,10 @@ const App = () => {
       .then((newPerson) => {
         setPersons([...persons].concat(newPerson));
         showNotification(`Added ${newNameTrimmed}`);
+      })
+      .catch((error) => {
+        if (error?.response.status !== 400) throw error;
+        showNotification(`${error.response.data.error}`, true);
       });
   };
 
