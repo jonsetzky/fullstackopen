@@ -80,6 +80,7 @@ describe("blogs", () => {
     assert.strictEqual((await Blog.find({})).length, originalCount);
   });
   test("fail with 400 and are not created if url is missing", async () => {
+    const originalCount = (await Blog.find({})).length;
     const blog = {
       author: `Test Author ${originalCount + 1}`,
       title: `Test Title ${originalCount + 1}`,
@@ -89,6 +90,7 @@ describe("blogs", () => {
     assert.strictEqual((await Blog.find({})).length, originalCount);
   });
   test("fail with 400 and are not created if url and title are missing", async () => {
+    const originalCount = (await Blog.find({})).length;
     const blog = {
       author: `Test Author ${originalCount + 1}`,
     };
