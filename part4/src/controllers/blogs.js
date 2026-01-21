@@ -19,4 +19,13 @@ blogsController.delete("/:id", async (request, response) => {
   response.status(204).end();
 });
 
+blogsController.put("/:id", async (request, response) => {
+  const updatedBlog = await Blog.findOneAndUpdate(
+    { _id: request.params.id },
+    request.body,
+    { new: true, runValidators: true },
+  );
+  response.json(updatedBlog);
+});
+
 module.exports = { blogsController };
