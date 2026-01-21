@@ -22,7 +22,7 @@ const App = () => {
     clearTimeout(notification?.lastTimeout);
     const lastTimeout = setTimeout(
       () => setNotification(null),
-      NOTIFICATION_TIMEOUT
+      NOTIFICATION_TIMEOUT,
     );
 
     setNotification({ message, isError, lastTimeout });
@@ -35,23 +35,23 @@ const App = () => {
     const newNameTrimmed = newName.replaceAll(/\s+/g, " ").trim();
 
     const existingPerson = persons.find(
-      (person) => person.name === newNameTrimmed
+      (person) => person.name === newNameTrimmed,
     );
     if (existingPerson !== undefined)
       return (
         confirm(
-          `${newNameTrimmed} is already in the phonebook. Replace the old number with a new one?`
+          `${newNameTrimmed} is already in the phonebook. Replace the old number with a new one?`,
         ) &&
         personService
-          .update(existingPerson.id, {
+          .update(existingPerson._id, {
             name: newNameTrimmed,
             number: newNumber,
           })
           .then((updatedPerson) => {
             setPersons(
               persons.map((person) =>
-                person.id !== updatedPerson.id ? person : updatedPerson
-              )
+                person._id !== updatedPerson._id ? person : updatedPerson,
+              ),
             );
             showNotification(`Updated ${updatedPerson.name}`);
           })
@@ -60,7 +60,7 @@ const App = () => {
 
             showNotification(
               `Person ${newNameTrimmed} has already been removed from the server`,
-              true
+              true,
             );
           })
       );
@@ -72,7 +72,7 @@ const App = () => {
           [...persons].concat({
             name: newNameTrimmed,
             number: newNumber,
-          })
+          }),
         );
         showNotification(`Added ${newNameTrimmed}`);
       });
