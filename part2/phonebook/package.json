@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "buildembed": "set VITE_BASE_URL=/api/persons && vite build && cp -r dist ../../part3/phonebook",
+    "buildembed": "set VITE_BASE_URL=\"/api/persons\" && vite build && cp -r dist ../../part3/phonebook",
     "lint": "eslint .",
     "preview": "vite preview"
   },
