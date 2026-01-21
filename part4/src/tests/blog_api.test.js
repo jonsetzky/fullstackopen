@@ -98,6 +98,16 @@ describe("blogs", () => {
     await api.post("/api/blogs").send(blog).timeout(5000).expect(400);
     assert.strictEqual((await Blog.find({})).length, originalCount);
   });
+
+  test("can be deleted", async () => {
+    const originalCount = (await Blog.find({})).length;
+    const blogToDelete = await Blog.findOne({});
+
+    await api.delete(`/api/blogs/${blogToDelete.id}`).timeout(5000).expect(204);
+
+    assert.strictEqual((await Blog.find({})).length, originalCount - 1);
+    assert.strictEqual((await Blog.find({ _id: blogToDelete.id })).length, 0);
+  });
 });
 
 after(async () => {

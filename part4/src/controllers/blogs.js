@@ -14,4 +14,9 @@ blogsController.post("/", async (request, response) => {
   response.status(201).json(result);
 });
 
+blogsController.delete("/:id", async (request, response) => {
+  await Blog.deleteOne({ _id: request.params.id });
+  response.status(204).end();
+});
+
 module.exports = { blogsController };
