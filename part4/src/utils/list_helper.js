@@ -15,9 +15,22 @@ const favoriteBlog = (blogs) => {
 
 // returns the author who has written the most blogs
 const mostBlogs = (blogs) => {
+  let authors = {};
+  blogs.forEach((blog) => {
+    authors[blog.author] = authors[blog.author] + 1 || 1;
+  });
+
+  let author = Object.entries(authors).reduce(
+    (mx, a) => (a[1] > mx[1] ? a : mx),
+    [null, 0],
+  );
+  if (author[0] === null) {
+    return null;
+  }
+
   return {
-    author: "Dummy Author",
-    blogs: 100,
+    author: author[0],
+    blogs: author[1],
   };
 };
 
@@ -25,4 +38,5 @@ module.exports = {
   dummy,
   totalLikes,
   favoriteBlog,
+  mostBlogs,
 };
