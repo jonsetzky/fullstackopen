@@ -5,7 +5,10 @@ const blogSchema = mongoose.Schema(
     title: String,
     author: String,
     url: String,
-    likes: Number,
+    likes: {
+      type: Number,
+      default: 0,
+    },
   },
   {
     collection: process.env.NODE_ENV === "test" ? "test_blogs" : "blogs",
