@@ -51,7 +51,7 @@ app.use(
 app.get("/api/persons", async (req, res) => {
   res.json(await getAllPersons());
 });
-app.get("/api/persons/:id", async (req, res) => {
+app.get("/api/persons/:id", async (req, res, next) => {
   await getPersonById(req.params.id)
     .then((persons) => {
       const person = persons[0];
@@ -60,11 +60,7 @@ app.get("/api/persons/:id", async (req, res) => {
       }
       res.json(person);
     })
-    .catch((err) => {
-      if (err.name === "CastError")
-        return res.status(400).json({ error: "invalid ID" });
-      res.status(500).json({ error: "internal server error" });
-    });
+    .catch(next);
 });
 app.delete("/api/persons/:id", async (req, res) => {
   await deletePerson(req.params.id);
@@ -116,6 +112,14 @@ app.put("/api/persons/:id", express.json(), async (req, res) => {
 
   res.json(await updatePerson(req.params.id, updatedPerson));
 });
+
+const errorHandler = (err, req, res, next) => {
+  if (err.name === "CastError")
+    return res.status(400).json({ error: "invalid ID" });
+
+  res.status(500).json({ error: "internal server error" });
+};
+app.use(errorHandler);
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
