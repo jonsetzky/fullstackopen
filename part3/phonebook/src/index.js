@@ -10,6 +10,7 @@ const {
   getAllPersons,
   getPersonById,
   deletePerson,
+  getPersonByName,
 } = require("./mongo.js");
 
 // this fixes querySrv problem with mongoose
@@ -46,14 +47,6 @@ app.use(
   }),
 );
 
-const generateId = () => {
-  let id = Math.floor(Math.random() * 10000).toString();
-  while (persons.find((person) => person.id === id)) {
-    id = Math.floor(Math.random() * 10000).toString();
-  }
-  return id;
-};
-
 app.get("/api/persons", async (req, res) => {
   res.json(await getAllPersons());
 });
@@ -79,14 +72,13 @@ app.delete("/api/persons/:id", async (req, res) => {
 app.post("/api/persons", express.json(), async (req, res) => {
   const newPerson = {
     ...req.body,
-    id: generateId(),
   };
 
   if (!newPerson.name || !newPerson.number) {
     return res.status(400).json({ error: "name or number is missing" });
   }
 
-  if (persons.find((person) => person.name === newPerson.name)) {
+  if (await getPersonByName(newPerson.name)) {
     return res.status(400).json({ error: "name must be unique" });
   }
 

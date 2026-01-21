@@ -19,6 +19,10 @@ const getPersonById = async (id) => {
   return await Person.find({ _id: id });
 };
 
+const getPersonByName = async (name) => {
+  return await Person.find({ name });
+};
+
 const addPerson = async (name, number) => {
   const person = new Person({
     name: name,
@@ -66,5 +70,6 @@ module.exports = {
   getAllPersons,
   addPerson,
   getPersonById,
+  getPersonByName,
   deletePerson,
 };
