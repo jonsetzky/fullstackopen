@@ -99,7 +99,7 @@ app.post("/api/persons", express.json(), (req, res) => {
   res.json(newPerson);
 });
 
-const PORT = 3001;
+const port = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
