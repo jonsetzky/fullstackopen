@@ -5,7 +5,7 @@
   "scripts": {
     "start": "node src/index.js",
     "dev": "node --watch src/index.js",
-    "test": "echo \"no test command\"",
+    "test": "node --test",
     "lint": "eslint ."
   },
   "repository": {
