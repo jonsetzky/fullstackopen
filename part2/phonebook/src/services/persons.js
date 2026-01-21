@@ -1,6 +1,5 @@
 import axios from "axios";
-const baseUrl =
-  process.env.REACT_APP_BASE_URL || "http://localhost:3001/persons";
+const baseUrl = process.env.VITE_BASE_URL || "http://localhost:3001/persons";
 
 const getAll = () => {
   return axios.get(baseUrl).then((response) => response.data);
