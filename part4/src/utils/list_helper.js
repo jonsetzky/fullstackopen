@@ -35,9 +35,22 @@ const mostBlogs = (blogs) => {
 };
 
 const mostLikes = (blogs) => {
+  let authors = {};
+  blogs.forEach((blog) => {
+    authors[blog.author] = authors[blog.author] + blog.likes || blog.likes;
+  });
+
+  let author = Object.entries(authors).reduce(
+    (mx, a) => (a[1] > mx[1] ? a : mx),
+    [null, 0],
+  );
+  if (author[0] === null) {
+    return null;
+  }
+
   return {
-    author: "Robert C. Martin",
-    likes: 171243,
+    author: author[0],
+    likes: author[1],
   };
 };
 

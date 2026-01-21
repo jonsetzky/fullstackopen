@@ -139,7 +139,7 @@ describe("most likes", () => {
     const correctBlog = oneBlog[0];
     assert.deepStrictEqual(listHelper.mostLikes(blogs), {
       author: correctBlog.author,
-      blogs: 1,
+      likes: correctBlog.likes,
     });
   });
   test("returns correct author with most likes", () => {
