@@ -9,7 +9,7 @@ const PersonList = ({
   <div>
     {persons
       .filter((person) =>
-        person.name.toLowerCase().includes(searchFilter.toLowerCase())
+        person.name.toLowerCase().includes(searchFilter.toLowerCase()),
       )
       .map((person) => (
         <span key={person.name}>
@@ -18,11 +18,14 @@ const PersonList = ({
             onClick={() => {
               confirm(`Are you sure you want to delete ${person.name}?`) &&
                 personService
-                  .remove(person.id)
-                  .then(() =>
-                    setPersons(persons.filter((p) => p.id !== person.id))
-                  );
-              showNotification(`Deleted ${person.name}`);
+                  .remove(person._id)
+                  .then(() => {
+                    setPersons(persons.filter((p) => p._id !== person._id));
+                    showNotification(`Deleted ${person.name}`);
+                  })
+                  .catch(() => {
+                    showNotification(`Failed to delete ${person.name}`, true);
+                  });
             }}
           >
             delete

@@ -67,13 +67,8 @@ const App = () => {
 
     personService
       .create({ name: newNameTrimmed, number: newNumber })
-      .then(() => {
-        setPersons(
-          [...persons].concat({
-            name: newNameTrimmed,
-            number: newNumber,
-          }),
-        );
+      .then((newPerson) => {
+        setPersons([...persons].concat(newPerson));
         showNotification(`Added ${newNameTrimmed}`);
       });
   };

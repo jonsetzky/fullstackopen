@@ -38,6 +38,12 @@ const deletePerson = async (id) => {
   await Person.deleteOne({ _id: id });
 };
 
+const updatePerson = async (id, newObject) => {
+  return await Person.findByIdAndUpdate(id, newObject, {
+    new: true,
+  });
+};
+
 async function main() {
   const name = process.argv[2];
   const number = process.argv[3];
@@ -72,4 +78,5 @@ module.exports = {
   getPersonById,
   getPersonByName,
   deletePerson,
+  updatePerson,
 };

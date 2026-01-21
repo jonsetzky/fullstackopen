@@ -11,6 +11,7 @@ const {
   getPersonById,
   deletePerson,
   getPersonByName,
+  updatePerson,
 } = require("./mongo.js");
 
 // this fixes querySrv problem with mongoose
@@ -90,6 +91,30 @@ app.post("/api/persons", express.json(), async (req, res) => {
   }
 
   res.json(await addPerson(newPerson.name, newPerson.number));
+});
+
+app.put("/api/persons/:id", express.json(), async (req, res) => {
+  const updatedPerson = {
+    ...req.body,
+  };
+
+  if (!updatedPerson.name || !updatedPerson.number) {
+    return res.status(400).json({ error: "name or number is missing" });
+  }
+
+  const person = await getPersonById(req.params.id);
+  if (!person) {
+    return res.status(404).json({ error: "person not found" });
+  }
+
+  if (
+    typeof updatedPerson.name !== "string" ||
+    typeof updatedPerson.number !== "string"
+  ) {
+    return res.status(400).json({ error: "name and number must be strings" });
+  }
+
+  res.json(await updatePerson(req.params.id, updatedPerson));
 });
 
 const PORT = process.env.PORT || 3001;
