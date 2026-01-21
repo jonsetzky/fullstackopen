@@ -1,7 +1,25 @@
+require("dotenv").config();
+
 const express = require("express");
 const cors = require("cors");
-
 var morgan = require("morgan");
+const mongoose = require("mongoose");
+
+// this fixes querySrv problem with mongoose
+// https://www.mongodb.com/community/forums/t/error-querysrv-econnrefused-mongodb/259042
+require("node:dns/promises").setServers(["1.1.1.1"]);
+
+const mongodb_url = process.env.MONGODB_URL;
+mongoose.set("strictQuery", false);
+mongoose
+  .connect(mongodb_url, { family: 4 })
+  .then((result) => {
+    console.log("connected to MongoDB");
+  })
+  .catch((error) => {
+    console.log("error connecting to MongoDB:", error);
+  });
+
 const app = express();
 
 app.use(cors());
