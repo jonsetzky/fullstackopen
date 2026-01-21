@@ -52,6 +52,22 @@ describe("blogs", () => {
     assert.strictEqual((await Blog.find({})).length, originalCount + 1);
     assert.deepStrictEqual(newBlog, { ...blog, id: newBlog.id });
   });
+
+  test("can be added to the db without providing likes", async () => {
+    const originalCount = (await Blog.find({})).length;
+
+    const blog = {
+      author: `Test Author ${originalCount + 1}`,
+      title: `Test Title ${originalCount + 1}`,
+      url: `http://testurl${originalCount + 1}.com`,
+    };
+
+    const newBlog = (
+      await api.post("/api/blogs").send(blog).timeout(5000).expect(201)
+    ).body;
+
+    assert.deepStrictEqual(newBlog, { ...blog, id: newBlog.id, likes: 0 });
+  });
 });
 
 after(async () => {
