@@ -108,6 +108,27 @@ describe("blogs", () => {
     assert.strictEqual((await Blog.find({})).length, originalCount - 1);
     assert.strictEqual((await Blog.find({ _id: blogToDelete.id })).length, 0);
   });
+
+  test("likes can be updated", async () => {
+    const blogToUpdate = await Blog.findOne({});
+    const oldLikes = blogToUpdate.likes;
+    const newLikes = oldLikes + 1;
+
+    const newBlog = {
+      title: blogToUpdate.title,
+      author: blogToUpdate.author,
+      url: blogToUpdate.url,
+      likes: newLikes,
+    };
+    await api
+      .put(`/api/blogs/${blogToUpdate._id}`)
+      .send(newBlog)
+      .timeout(5000)
+      .expect(200);
+
+    const updatedBlog = await Blog.findById(blogToUpdate.id);
+    assert.strictEqual(updatedBlog.likes, newLikes);
+  });
 });
 
 after(async () => {
