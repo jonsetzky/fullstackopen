@@ -20,7 +20,7 @@ const getPersonById = async (id) => {
 };
 
 const getPersonByName = async (name) => {
-  return await Person.find({ name });
+  return await Person.find({ name }).then((persons) => persons[0]);
 };
 
 const addPerson = async (name, number) => {
