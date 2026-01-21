@@ -25,6 +25,28 @@ describe("blogs", () => {
         assert.strictEqual(response.body.length, 2);
       });
   });
+  test("have author field", async () => {
+    await api
+      .get("/api/blogs")
+      .timeout(5000)
+      .expect(200)
+      .then((response) => {
+        for (const blog of response.body) {
+          assert("author" in blog);
+        }
+      });
+  });
+  test("have id field", async () => {
+    await api
+      .get("/api/blogs")
+      .timeout(5000)
+      .expect(200)
+      .then((response) => {
+        for (const blog of response.body) {
+          assert("id" in blog);
+        }
+      });
+  });
 });
 
 after(async () => {
