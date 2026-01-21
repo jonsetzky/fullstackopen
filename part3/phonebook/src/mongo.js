@@ -12,7 +12,19 @@ const personSchema = new mongoose.Schema({
     required: true,
     unique: true,
   },
-  number: String,
+  number: {
+    type: String,
+    minLength: 8,
+    required: true,
+
+    validate: {
+      validator: function (v) {
+        return /\d{2,3}-\d*/.test(v);
+      },
+      message: (props) =>
+        `${props.value} is not a valid phone number! Number must be formed by two parts separated by a dash (-) and the first part must be 2 or 3 digits long.`,
+    },
+  },
 });
 const Person = mongoose.model("Person", personSchema);
 

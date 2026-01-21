@@ -56,6 +56,9 @@ const App = () => {
             showNotification(`Updated ${updatedPerson.name}`);
           })
           .catch((error) => {
+            if (error?.response.status === 400) {
+              return showNotification(`${error.response.data.error}`, true);
+            }
             if (error?.response.status !== 404) throw error;
 
             showNotification(
