@@ -35,7 +35,7 @@ const addPerson = async (name, number) => {
 };
 
 const deletePerson = async (id) => {
-  await Person.findByIdAndRemove(id);
+  await Person.deleteOne({ _id: id });
 };
 
 async function main() {
