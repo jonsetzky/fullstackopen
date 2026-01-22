@@ -3,8 +3,11 @@ import Blog from "./components/Blog";
 import blogService from "./services/blogs";
 import loginService from "./services/login";
 import CreateBlog from "./components/CreateBlog";
+import { AxiosError } from "axios";
+import Notification from "./components/Notification";
 
 const App = () => {
+  const [notification, setNotification] = useState(null);
   const [blogs, setBlogs] = useState([]);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -34,6 +37,12 @@ const App = () => {
       setUsername("");
       setPassword("");
     } catch (exception) {
+      if (exception instanceof AxiosError) {
+        if (exception.response) {
+          showNotification(exception.response.data.error, true);
+          return;
+        }
+      }
       console.log("error logging in", exception);
     }
   };
@@ -44,9 +53,25 @@ const App = () => {
     setUser(null);
   };
 
+  const showNotification = (message, isError = false) => {
+    const NOTIFICATION_TIMEOUT = 5000;
+
+    clearTimeout(notification?.lastTimeout);
+    const lastTimeout = setTimeout(
+      () => setNotification(null),
+      NOTIFICATION_TIMEOUT,
+    );
+
+    setNotification({ message, isError, lastTimeout });
+  };
+
   if (!user) {
     return (
       <div>
+        <Notification
+          message={notification?.message}
+          isError={notification?.isError}
+        />
         <h1>log in to application</h1>
         <form onSubmit={handleLogin}>
           <div>
@@ -75,6 +100,10 @@ const App = () => {
 
   return (
     <div>
+      <Notification
+        message={notification?.message}
+        isError={notification?.isError}
+      />
       <h2>blogs</h2>
       <p>
         {user.name || user.username} logged in
@@ -84,6 +113,7 @@ const App = () => {
         onAddBlog={(newBlog) => {
           setBlogs(blogs.concat(newBlog));
         }}
+        showNotification={showNotification}
       />
       <div />
       {blogs.map((blog) => (
