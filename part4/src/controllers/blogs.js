@@ -36,4 +36,4 @@ blogsController.put("/:id", async (request, response) => {
   response.json(updatedBlog);
 });
 
-module.exports = { blogsController };
+module.exports = blogsController;
