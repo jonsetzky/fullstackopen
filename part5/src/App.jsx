@@ -134,8 +134,13 @@ const App = () => {
         .map((blog) => (
           <Blog
             key={blog.id}
+            user={user}
             blog={blog}
             updateBlog={(updatedBlog) => {
+              if (updatedBlog.remove) {
+                setBlogs(blogs.filter((b) => b.id !== updatedBlog.id));
+                return;
+              }
               setBlogs(
                 blogs.map((b) => (b.id === updatedBlog.id ? updatedBlog : b)),
               );
