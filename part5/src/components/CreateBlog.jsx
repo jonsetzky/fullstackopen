@@ -4,7 +4,7 @@ import TextInput from "./TextInput";
 
 import blogService from "../services/blogs";
 
-const CreateBlog = ({ onAddBlog, showNotification }) => {
+const CreateBlog = ({ onAddBlog, showNotification, user }) => {
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
   const [url, setUrl] = useState("");
@@ -16,10 +16,11 @@ const CreateBlog = ({ onAddBlog, showNotification }) => {
       author,
       url,
     });
+
     setTitle("");
     setAuthor("");
     setUrl("");
-    onAddBlog(newBlog);
+    onAddBlog({ ...newBlog, user });
     showNotification(
       `a new blog "${newBlog.title}" by ${newBlog.author} added successfully`,
     );

@@ -119,6 +119,7 @@ const App = () => {
               setShowNewBlogForm(false);
             }}
             showNotification={showNotification}
+            user={user}
           />
         ) : (
           <></>
