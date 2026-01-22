@@ -129,6 +129,51 @@ describe("blogs", () => {
     const updatedBlog = await Blog.findById(blogToUpdate.id);
     assert.strictEqual(updatedBlog.likes, newLikes);
   });
+
+  test("are assigned a user when created", async () => {
+    const originalCount = (await Blog.find({})).length;
+
+    const blog = {
+      author: `Test Author ${originalCount + 1}`,
+      title: `Test Title ${originalCount + 1}`,
+      url: `http://testurl${originalCount + 1}.com`,
+      likes: originalCount + 1,
+    };
+
+    const newBlog = (
+      await api.post("/api/blogs").send(blog).timeout(5000).expect(201)
+    ).body;
+
+    const newBlogFromDb = await Blog.find({ _id: newBlog.id });
+    assert("user" in newBlogFromDb);
+
+    const user = newBlogFromDb.user;
+    assert("username" in user);
+    assert("id" in user);
+  });
+  test("can be found when listing all users", async () => {
+    const originalCount = (await Blog.find({})).length;
+
+    const blog = {
+      author: `Test Author ${originalCount + 1}`,
+      title: `Test Title ${originalCount + 1}`,
+      url: `http://testurl${originalCount + 1}.com`,
+      likes: originalCount + 1,
+    };
+
+    const newBlog = (
+      await api.post("/api/blogs").send(blog).timeout(5000).expect(201)
+    ).body;
+
+    const newBlogFromDb = await Blog.find({ _id: newBlog.id });
+    const userId = newBlogFromDb.user.id;
+
+    const allUsers = await api.get("/api/users").timeout(5000).expect(200);
+    const user = allUsers.body.find((u) => u.id === userId);
+
+    const usersBlog = user.blogs.find((b) => b.id === newBlog.id);
+    assert.deepStrictEqual(usersBlog, newBlog);
+  });
 });
 
 after(async () => {

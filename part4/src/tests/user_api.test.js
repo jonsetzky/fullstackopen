@@ -151,6 +151,24 @@ describe("users", () => {
 
     assert.strictEqual(await bcrypt.compare(password, userInDb.password), true);
   });
+
+  test("blogs are empty by default", async () => {
+    const originalUsers = await api.get("/api/users").timeout(5000).expect(200);
+
+    const newUser = {
+      username: "testuser" + Math.round(Math.random() * 1000),
+      name: "Test User",
+      password: "testpassword",
+    };
+    const resp = await api.post("/api/users").send(newUser).expect(201);
+    const userId = resp.body.id;
+
+    const updatedUsers = await api.get("/api/users").timeout(5000).expect(200);
+    assert.strictEqual(updatedUsers.body.length, originalUsers.body.length + 1);
+
+    const updatedUser = updatedUsers.body.find((u) => u.id === userId);
+    assert.strictEqual(updatedUser.blogs.length, 0);
+  });
 });
 
 after(async () => {
