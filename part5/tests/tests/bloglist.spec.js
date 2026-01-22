@@ -40,4 +40,28 @@ describe("Blog app", () => {
       ).toBeVisible();
     });
   });
+
+  describe("when logged in", () => {
+    beforeEach(async ({ page }) => {
+      await page.locator("#username").fill("testuser");
+      await page.locator("#password").fill("testpassword");
+      await page.getByText("login").click();
+    });
+
+    test("a new blog can be created", async ({ page }) => {
+      const title = "Test Blog Title";
+      const author = "Test Author";
+
+      await page.getByText("create new blog").click();
+      await page.locator("#blog-title").fill(title);
+      await page.locator("#blog-author").fill(author);
+      await page.locator("#blog-url").fill("http://testblog.com");
+      await page.getByRole("button", { name: "create" }).click();
+
+      await expect(page.getByText(`${title}`, { exact: true })).toBeVisible();
+      await expect(
+        page.getByText("http://testblog.com", { exact: false }),
+      ).not.toBeVisible();
+    });
+  });
 });
