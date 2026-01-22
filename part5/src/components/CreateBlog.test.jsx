@@ -1,6 +1,5 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import Blog from "./Blog";
 import CreateBlog from "./CreateBlog";
 
 test("calls blog update callback with correct details", async () => {
@@ -63,5 +62,4 @@ test("calls blog update callback with correct details", async () => {
     likes: 5,
     user,
   });
-  // expect(blogServiceMock.default.create.mock.calls).toHaveLength(1);
 });
