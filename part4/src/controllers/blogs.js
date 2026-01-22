@@ -29,7 +29,7 @@ blogsController.delete("/:id", async (request, response) => {
 
 blogsController.put("/:id", async (request, response) => {
   const updatedBlog = await Blog.findOneAndUpdate(
-    { _id: request.params.id },
+    { _id: request.params.id, user: request.user.id },
     request.body,
     { new: true, runValidators: true },
   );
