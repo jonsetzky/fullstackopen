@@ -29,9 +29,19 @@ const CreateBlog = ({ onAddBlog, showNotification, user }) => {
     <div>
       <h1>create new blog</h1>
       <form onSubmit={handleBlogCreate}>
-        <TextInput label="title" value={title} setValue={setTitle} />
-        <TextInput label="author" value={author} setValue={setAuthor} />
-        <TextInput label="url" value={url} setValue={setUrl} />
+        <TextInput
+          id="blog-title"
+          label="title"
+          value={title}
+          setValue={setTitle}
+        />
+        <TextInput
+          id="blog-author"
+          label="author"
+          value={author}
+          setValue={setAuthor}
+        />
+        <TextInput id="blog-url" label="url" value={url} setValue={setUrl} />
         <button type="submit">create</button>
       </form>
     </div>
