@@ -89,7 +89,54 @@ describe("users", () => {
     const updatedUsers = await api.get("/api/users").timeout(5000).expect(200);
     assert.strictEqual(updatedUsers.body.length, originalUsers.body.length);
   });
+  test("cannot be created with a short password", async () => {
+    const originalUsers = await api.get("/api/users").timeout(5000).expect(200);
+    const newUser = {
+      username: "duplicateuser" + Math.round(Math.random() * 100000),
+      password: "te",
+    };
 
+    await api.post("/api/users").send(newUser).expect(400);
+
+    const updatedUsers = await api.get("/api/users").timeout(5000).expect(200);
+    assert.strictEqual(updatedUsers.body.length, originalUsers.body.length);
+  });
+
+  test("can be created with a min length password", async () => {
+    const originalUsers = await api.get("/api/users").timeout(5000).expect(200);
+    const newUser = {
+      username: "testuser" + Math.round(Math.random() * 10),
+      password: "tes",
+    };
+    await api.post("/api/users").send(newUser).expect(201);
+
+    const updatedUsers = await api.get("/api/users").timeout(5000).expect(200);
+    assert.strictEqual(updatedUsers.body.length, originalUsers.body.length + 1);
+  });
+  test("cannot be created with a short username", async () => {
+    const originalUsers = await api.get("/api/users").timeout(5000).expect(200);
+    const newUser = {
+      username: "us",
+      password: "testpassword",
+    };
+
+    await api.post("/api/users").send(newUser).expect(400);
+
+    const updatedUsers = await api.get("/api/users").timeout(5000).expect(200);
+    assert.strictEqual(updatedUsers.body.length, originalUsers.body.length);
+  });
+
+  test("can be created with a min length username", async () => {
+    const originalUsers = await api.get("/api/users").timeout(5000).expect(200);
+    const newUser = {
+      username: "tes",
+      password: "testpassword",
+    };
+    await api.post("/api/users").send(newUser).expect(201);
+
+    const updatedUsers = await api.get("/api/users").timeout(5000).expect(200);
+    assert.strictEqual(updatedUsers.body.length, originalUsers.body.length + 1);
+  });
   test("password is hashed", async () => {
     const password = "testpassword";
     let newUser = {

@@ -18,6 +18,7 @@ const errorHandler = (error, request, response, next) => {
   if (error.name === "CastError") {
     return response.status(400).send({ error: "malformatted id" });
   } else if (error.name === "ValidationError") {
+    // todo better error formatting that's returned to client
     return response.status(400).json({ error: error.message });
   } else if (
     error.name === "MongoServerError" &&
