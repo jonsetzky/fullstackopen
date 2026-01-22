@@ -53,7 +53,7 @@ blogsController.put("/:id", async (request, response) => {
     return response.status(401).json({ error: "unauthorized" });
   }
   const updatedBlog = await Blog.findOneAndUpdate(
-    { _id: request.params.id, user: user.id },
+    { _id: request.params.id },
     request.body,
     { new: true, runValidators: true },
   );

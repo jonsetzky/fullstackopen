@@ -245,7 +245,32 @@ describe("blogs", () => {
     const updatedBlog = await Blog.findById(blogToUpdate.id);
     assert.strictEqual(updatedBlog.likes, newLikes);
   });
+  test("likes of different users can be updated", async () => {
+    const blogToUpdate = await new Blog({
+      author: `Test Author diflikeupdate`,
+      title: `Test Title diflikeupdate`,
+      url: `http://testurldiflikeupdate.com`,
+      user: user1.id,
+    }).save();
+    const oldLikes = blogToUpdate.likes;
+    const newLikes = oldLikes + 1;
 
+    const newBlog = {
+      title: blogToUpdate.title,
+      author: blogToUpdate.author,
+      url: blogToUpdate.url,
+      likes: newLikes,
+    };
+    await api
+      .put(`/api/blogs/${blogToUpdate._id}`)
+      .set(user2.auth)
+      .send(newBlog)
+      .timeout(5000)
+      .expect(200);
+
+    const updatedBlog = await Blog.findById(blogToUpdate.id);
+    assert.strictEqual(updatedBlog.likes, newLikes);
+  });
   test("likes cannot be updated when not authorized", async () => {
     const blogToUpdate = await Blog.findOne({ user: user1.id });
     const oldLikes = blogToUpdate.likes;
