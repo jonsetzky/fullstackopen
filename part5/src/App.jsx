@@ -13,6 +13,8 @@ const App = () => {
   const [password, setPassword] = useState("");
   const [user, setUser] = useState(null);
 
+  const [showNewBlogForm, setShowNewBlogForm] = useState(false);
+
   useEffect(() => {
     blogService.getAll().then((blogs) => setBlogs(blogs));
   }, []);
@@ -109,12 +111,22 @@ const App = () => {
         {user.name || user.username} logged in
         <button onClick={logOut}>logout</button>
       </p>
-      <CreateBlog
-        onAddBlog={(newBlog) => {
-          setBlogs(blogs.concat(newBlog));
-        }}
-        showNotification={showNotification}
-      />
+      <div>
+        {showNewBlogForm ? (
+          <CreateBlog
+            onAddBlog={(newBlog) => {
+              setBlogs(blogs.concat(newBlog));
+              setShowNewBlogForm(false);
+            }}
+            showNotification={showNotification}
+          />
+        ) : (
+          <></>
+        )}
+        <button onClick={() => setShowNewBlogForm(!showNewBlogForm)}>
+          {showNewBlogForm ? "cancel" : "create new blog"}
+        </button>
+      </div>
       <div />
       {blogs.map((blog) => (
         <Blog key={blog.id} blog={blog} />

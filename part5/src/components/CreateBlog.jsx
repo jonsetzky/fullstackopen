@@ -16,6 +16,9 @@ const CreateBlog = ({ onAddBlog, showNotification }) => {
       author,
       url,
     });
+    setTitle("");
+    setAuthor("");
+    setUrl("");
     onAddBlog(newBlog);
     showNotification(
       `a new blog "${newBlog.title}" by ${newBlog.author} added successfully`,
