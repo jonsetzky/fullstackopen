@@ -18,6 +18,7 @@ app.use(express.json());
 app.use(middleware.requestLogger);
 
 app.use("/api/blogs", require("./controllers/blogs").blogsController);
+app.use("/api/users", require("./controllers/users").usersController);
 
 app.use(middleware.unknownEndpoint);
 app.use(middleware.errorHandler);

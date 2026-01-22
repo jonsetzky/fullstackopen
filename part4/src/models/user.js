@@ -28,13 +28,12 @@ userSchema.set("toJSON", {
   },
 });
 
-userSchema.pre("save", function (next) {
+userSchema.pre("save", async function () {
   if (!this.isModified("password")) {
-    next();
+    return;
   }
-  const hash = bcrypt.hashSync(this.password, 10);
+  const hash = await bcrypt.hash(this.password, 10);
   this.password = hash;
-  next();
 });
 
 module.exports = mongoose.model("User", userSchema);

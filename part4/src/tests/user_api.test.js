@@ -1,6 +1,7 @@
 const { test, after, describe } = require("node:test");
 const assert = require("node:assert");
 const mongoose = require("mongoose");
+const bcrypt = require("bcryptjs");
 const supertest = require("supertest");
 const app = require("../app");
 
@@ -90,16 +91,18 @@ describe("users", () => {
   });
 
   test("password is hashed", async () => {
+    const password = "testpassword";
     let newUser = {
       username: "testuser" + Math.round(Math.random() * 1000000),
       name: "Test User",
-      password: "testpassword",
+      password,
     };
     newUser = await api.post("/api/users").send(newUser).expect(201);
     newUser = newUser.body;
 
     const userInDb = await User.findOne({ _id: newUser.id });
-    assert.notStrictEqual(userInDb.password, "testpassword");
+
+    assert.strictEqual(await bcrypt.compare(password, userInDb.password), true);
   });
 });
 
