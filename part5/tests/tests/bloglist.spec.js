@@ -63,5 +63,27 @@ describe("Blog app", () => {
         page.getByText("http://testblog.com", { exact: false }),
       ).not.toBeVisible();
     });
+
+    test("user can like a blog", async ({ page }) => {
+      const title = "Test Blog Title";
+      const author = "Test Author";
+
+      await page.getByText("create new blog").click();
+      await page.locator("#blog-title").fill(title);
+      await page.locator("#blog-author").fill(author);
+      await page.locator("#blog-url").fill("http://testblog.com");
+      await page.getByRole("button", { name: "create" }).click();
+
+      await page.getByText("expand").last().click();
+      await page.getByRole("button", { name: "like" }).click();
+
+      await page.waitForResponse(
+        (resp) => resp.url().includes("/api/blogs") && resp.status() === 200,
+      );
+
+      await expect(
+        page.locator('tr:has-text("likes") td:nth-child(1)'),
+      ).toBeVisible();
+    });
   });
 });

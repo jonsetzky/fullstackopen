@@ -42,12 +42,11 @@ const Blog = ({ blog, updateBlog, user }) => {
                   <button
                     onClick={async () => {
                       const updatedBlog = { ...blog, likes: blog.likes + 1 };
-                      const newBlog = await blogService.update(blog.id, {
+                      updateBlog(updatedBlog);
+                      await blogService.update(blog.id, {
                         ...updatedBlog,
                         user: blog.user.id,
                       });
-                      updateBlog({ ...blog, likes: newBlog.likes });
-                      // setLikes(newBlog.likes);
                     }}
                   >
                     like
