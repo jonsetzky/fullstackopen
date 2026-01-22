@@ -13,6 +13,27 @@ describe("Blog app", () => {
       },
     });
   });
+
+  const createDummyUser = async (page) => {
+    await page.request.post("http://localhost:5173/api/users", {
+      data: {
+        username: "dummyuser",
+        password: "testpassword",
+      },
+    });
+
+    const response = await page.request.post(
+      "http://localhost:5173/api/login",
+      {
+        data: {
+          username: "dummyuser",
+          password: "testpassword",
+        },
+      },
+    );
+    return await response.json();
+  };
+
   test("login form is shown", async ({ page }) => {
     await expect(
       page.getByText("log in to application", { exact: false }),
@@ -43,6 +64,17 @@ describe("Blog app", () => {
 
   describe("when logged in", () => {
     beforeEach(async ({ page }) => {
+      await page.goto("http://localhost:5173");
+
+      await page.request.post("http://localhost:5173/api/testing/reset");
+
+      await page.request.post("http://localhost:5173/api/users", {
+        data: {
+          username: "testuser",
+          password: "testpassword",
+        },
+      });
+
       await page.locator("#username").fill("testuser");
       await page.locator("#password").fill("testpassword");
       await page.getByText("login").click();
@@ -84,6 +116,63 @@ describe("Blog app", () => {
       await expect(
         page.locator('tr:has-text("likes") td:nth-child(1)'),
       ).toBeVisible();
+    });
+
+    test("user can delete their blog", async ({ page }) => {
+      const title = "Test Blog Title";
+      const author = "Test Author";
+
+      await page.getByText("create new blog").click();
+      await page.locator("#blog-title").fill(title);
+      await page.locator("#blog-author").fill(author);
+      await page.locator("#blog-url").fill("http://testblog.com");
+      await page.getByRole("button", { name: "create" }).click();
+
+      await page.getByText("expand").last().click();
+
+      const deleteButton = await page.getByRole("button", { name: "remove" });
+
+      expect(deleteButton).toBeVisible();
+
+      page.on("dialog", (dialog) => dialog.accept());
+      await deleteButton.click();
+
+      await page.waitForResponse(
+        (resp) =>
+          resp.url().includes("/api/blogs") &&
+          resp.status().toString().startsWith("2"),
+      );
+
+      await expect(
+        page.getByText(`${title}`, { exact: true }),
+      ).not.toBeVisible();
+    });
+    test("user cannot see remove button on others' blogs", async ({ page }) => {
+      const dummyUser = await createDummyUser(page);
+      const title = "Test Blog Title";
+      const author = "Test Author";
+
+      await page.request.post("http://localhost:5173/api/blogs", {
+        data: {
+          title,
+          author,
+          url: "http://testblog.com",
+        },
+        headers: { Authorization: `Bearer ${dummyUser.token}` },
+      });
+
+      await page.reload();
+
+      await page.getByText("expand").last().click();
+      await page.getByRole("button", { name: "like" }).click();
+
+      await page.waitForResponse(
+        (resp) => resp.url().includes("/api/blogs") && resp.status() === 200,
+      );
+
+      const deleteButton = await page.getByRole("button", { name: "remove" });
+
+      expect(deleteButton).not.toBeVisible();
     });
   });
 });
