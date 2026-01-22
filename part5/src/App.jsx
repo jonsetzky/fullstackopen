@@ -129,7 +129,15 @@ const App = () => {
       </div>
       <div />
       {blogs.map((blog) => (
-        <Blog key={blog.id} blog={blog} />
+        <Blog
+          key={blog.id}
+          blog={blog}
+          updateBlog={(updatedBlog) => {
+            setBlogs(
+              blogs.map((b) => (b.id === updatedBlog.id ? updatedBlog : b)),
+            );
+          }}
+        />
       ))}
     </div>
   );
