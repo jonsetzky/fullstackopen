@@ -1,0 +1,9 @@
+post http://localhost:3003/api/blogs
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRlc3QiLCJpZCI6IjY5NzIwNjg4OWI5ZmZiZTZmNGJkODg3NyIsImlhdCI6MTc2OTA4MDU0MiwiZXhwIjoxNzY5MDg0MTQyfQ.O-reGzofh_fe7XwWO9PBsQldOJKd-RCea-hyPZbGMx4
+
+{
+    "title": "My blog",
+    "author": "John Smith",
+    "url": "http://example.com/my-blog",
+}
