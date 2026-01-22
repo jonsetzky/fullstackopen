@@ -172,6 +172,6 @@ describe("users", () => {
 });
 
 after(async () => {
-  await User.deleteMany({});
+  //   await User.deleteMany({});
   await mongoose.connection.close();
 });

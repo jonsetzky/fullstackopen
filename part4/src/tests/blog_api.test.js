@@ -1,4 +1,4 @@
-const { test, after, describe } = require("node:test");
+const { test, after, describe, before } = require("node:test");
 const assert = require("node:assert");
 const mongoose = require("mongoose");
 const supertest = require("supertest");
@@ -9,6 +9,16 @@ const Blog = require("../models/blog");
 const api = supertest(app);
 
 describe("blogs", () => {
+  before(async () => {
+    await api
+      .post("/api/users")
+      .send({
+        username: "testuser1" + Math.round(Math.random() * 1000),
+        name: "Test User",
+        password: "testpassword",
+      })
+      .expect(201);
+  });
   test("are returned as json", async () => {
     await api
       .get("/api/blogs")
@@ -45,12 +55,12 @@ describe("blogs", () => {
       likes: originalCount + 1,
     };
 
-    const newBlog = (
+    const { user, ...newBlog } = (
       await api.post("/api/blogs").send(blog).timeout(5000).expect(201)
     ).body;
 
     assert.strictEqual((await Blog.find({})).length, originalCount + 1);
-    assert.deepStrictEqual(newBlog, { ...blog, id: newBlog.id });
+    assert.deepEqual(newBlog, { ...blog, id: newBlog.id });
   });
 
   test("can be added to the db without providing likes", async () => {
@@ -62,11 +72,11 @@ describe("blogs", () => {
       url: `http://testurl${originalCount + 1}.com`,
     };
 
-    const newBlog = (
+    const { user, ...newBlog } = (
       await api.post("/api/blogs").send(blog).timeout(5000).expect(201)
     ).body;
 
-    assert.deepStrictEqual(newBlog, { ...blog, id: newBlog.id, likes: 0 });
+    assert.deepEqual(newBlog, { ...blog, id: newBlog.id, likes: 0 });
   });
 
   test("fail with 400 and are not created if title is missing", async () => {
@@ -144,7 +154,9 @@ describe("blogs", () => {
       await api.post("/api/blogs").send(blog).timeout(5000).expect(201)
     ).body;
 
-    const newBlogFromDb = await Blog.find({ _id: newBlog.id });
+    const newBlogFromDb = await Blog.findOne({ _id: newBlog.id }).populate(
+      "user",
+    );
     assert("user" in newBlogFromDb);
 
     const user = newBlogFromDb.user;
@@ -165,11 +177,12 @@ describe("blogs", () => {
       await api.post("/api/blogs").send(blog).timeout(5000).expect(201)
     ).body;
 
-    const newBlogFromDb = await Blog.find({ _id: newBlog.id });
-    const userId = newBlogFromDb.user.id;
+    const newBlogFromDb = await Blog.findOne({ _id: newBlog.id });
+    const userId = newBlogFromDb.user;
+    assert.ok(userId);
 
     const allUsers = await api.get("/api/users").timeout(5000).expect(200);
-    const user = allUsers.body.find((u) => u.id === userId);
+    const user = allUsers.body.find((u) => u.id == userId);
 
     const usersBlog = user.blogs.find((b) => b.id === newBlog.id);
     assert.deepStrictEqual(usersBlog, newBlog);

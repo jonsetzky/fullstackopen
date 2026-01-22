@@ -15,6 +15,12 @@ const userSchema = mongoose.Schema(
       required: true,
       minLength: 3,
     },
+    blogs: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Blog",
+      },
+    ],
   },
   {
     collection: process.env.NODE_ENV === "test" ? "test_users" : "users",

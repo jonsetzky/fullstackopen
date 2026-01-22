@@ -1,16 +1,24 @@
 const blogsController = require("express").Router();
+const assert = require("assert");
 
 const Blog = require("../models/blog");
+const User = require("../models/user");
 
 blogsController.get("/", async (request, response) => {
-  const blogs = await Blog.find({});
+  const blogs = await Blog.find({}).populate("user");
   response.json(blogs);
 });
 
 blogsController.post("/", async (request, response) => {
-  const blog = new Blog(request.body);
+  const randomUser = await User.findOne({});
+  assert.ok(randomUser);
+  const blog = new Blog({ ...request.body, user: randomUser._id });
 
   const result = await blog.save();
+
+  randomUser.blogs = randomUser.blogs.concat(result._id);
+  await randomUser.save();
+
   response.status(201).json(result);
 });
 
