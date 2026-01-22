@@ -13,3 +13,7 @@ The approach I initially chose contradicts the note at the bottom of this task s
 ## 4.16
 
 The instructions note that password restrictions shouldn't be handled by Mongoose validation, but in my approach it's possible as hashing is done in the pre-save hook.
+
+## 4.18
+
+All endpoints that modify the database require authentication.

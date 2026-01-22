@@ -10,26 +10,38 @@ blogsController.get("/", async (request, response) => {
 });
 
 blogsController.post("/", async (request, response) => {
-  const randomUser = await User.findOne({});
-  assert.ok(randomUser);
-  const blog = new Blog({ ...request.body, user: randomUser._id });
+  const user = request.user;
+  if (!user) {
+    return response.status(401).json({ error: "unauthorized" });
+  }
+
+  assert.ok(user);
+  const blog = new Blog({ ...request.body, user: user.id });
 
   const result = await blog.save();
 
-  randomUser.blogs = randomUser.blogs.concat(result._id);
-  await randomUser.save();
+  user.blogs = user.blogs.concat(result._id);
+  await user.save();
 
   response.status(201).json(result);
 });
 
 blogsController.delete("/:id", async (request, response) => {
-  await Blog.deleteOne({ _id: request.params.id });
+  const user = request.user;
+  if (!user) {
+    return response.status(401).json({ error: "unauthorized" });
+  }
+  await Blog.deleteOne({ _id: request.params.id, user: request.user.id });
   response.status(204).end();
 });
 
 blogsController.put("/:id", async (request, response) => {
+  const user = request.user;
+  if (!user) {
+    return response.status(401).json({ error: "unauthorized" });
+  }
   const updatedBlog = await Blog.findOneAndUpdate(
-    { _id: request.params.id, user: request.user.id },
+    { _id: request.params.id, user: user.id },
     request.body,
     { new: true, runValidators: true },
   );
