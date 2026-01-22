@@ -23,19 +23,22 @@ const reducer = (state = initialState, action) => {
   console.log("state now: ", state);
   console.log("action", action);
 
+  let newState = state;
+
   switch (action.type) {
     case "VOTE":
-      return state.map((anecdote) => {
+      newState = state.map((anecdote) => {
         if (anecdote.id === action.data.id) {
           return { ...anecdote, votes: anecdote.votes + 1 };
         }
         return anecdote;
       });
+      break;
     case "ADD_ANECDOTE":
-      return [...state, asObject(action.data.content)];
-    default:
-      return state;
+      newState = [...state, asObject(action.data.content)];
+      break;
   }
+  return newState.sort((a, b) => b.votes - a.votes);
 };
 
 export const voteAnecdote = (id) => {
