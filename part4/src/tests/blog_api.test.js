@@ -9,33 +9,42 @@ const User = require("../models/user");
 
 const api = supertest(app);
 
-let authUsername = null;
-let authUserId = null;
-let auth = null;
+let user1 = null;
+let user2 = null;
+
+const createUserAndAuth = async () => {
+  const username = "testuser1" + Math.round(Math.random() * 100000000);
+  const user = (
+    await api
+      .post("/api/users")
+      .send({
+        username,
+        name: "Test User",
+        password: "testpassword",
+      })
+      .expect(201)
+  ).body;
+  const token = (
+    await api
+      .post("/api/login")
+      .send({
+        username,
+        password: "testpassword",
+      })
+      .expect(200)
+  ).body.token;
+  return {
+    auth: { Authorization: `Bearer ${token}` },
+    id: user.id,
+    username: user.username,
+  };
+};
 
 describe("blogs", () => {
   before(async () => {
     await User.deleteMany({});
-    const username = "testuser1" + Math.round(Math.random() * 1000);
-    const user = (
-      await api
-        .post("/api/users")
-        .send({
-          username,
-          name: "Test User",
-          password: "testpassword",
-        })
-        .expect(201)
-    ).body;
-    const token = (
-      await api.post("/api/login").send({
-        username,
-        password: "testpassword",
-      })
-    ).body.token;
-    auth = { Authorization: `Bearer ${token}` };
-    authUserId = user.id;
-    authUsername = user.username;
+    user1 = await createUserAndAuth();
+    user2 = await createUserAndAuth();
   });
   test("are returned as json", async () => {
     await api
@@ -77,14 +86,14 @@ describe("blogs", () => {
     const newBlog = (
       await api
         .post("/api/blogs")
-        .set(auth)
+        .set(user1.auth)
         .send(blog)
         .timeout(5000)
         .expect(201)
     ).body;
 
     assert.strictEqual((await Blog.find({})).length, originalCount + 1);
-    assert.deepEqual(newBlog, { ...blog, id: newBlog.id, user: authUserId });
+    assert.deepEqual(newBlog, { ...blog, id: newBlog.id, user: user1.id });
   });
 
   test("cannot be created when not authorized", async () => {
@@ -114,7 +123,7 @@ describe("blogs", () => {
     const { user, ...newBlog } = (
       await api
         .post("/api/blogs")
-        .set(auth)
+        .set(user1.auth)
         .send(blog)
         .timeout(5000)
         .expect(201)
@@ -130,7 +139,12 @@ describe("blogs", () => {
       url: `http://testurl${originalCount + 1}.com`,
     };
 
-    await api.post("/api/blogs").set(auth).send(blog).timeout(5000).expect(400);
+    await api
+      .post("/api/blogs")
+      .set(user1.auth)
+      .send(blog)
+      .timeout(5000)
+      .expect(400);
     assert.strictEqual((await Blog.find({})).length, originalCount);
   });
 
@@ -141,7 +155,12 @@ describe("blogs", () => {
       title: `Test Title ${originalCount + 1}`,
     };
 
-    await api.post("/api/blogs").set(auth).send(blog).timeout(5000).expect(400);
+    await api
+      .post("/api/blogs")
+      .set(user1.auth)
+      .send(blog)
+      .timeout(5000)
+      .expect(400);
     assert.strictEqual((await Blog.find({})).length, originalCount);
   });
 
@@ -151,13 +170,18 @@ describe("blogs", () => {
       author: `Test Author ${originalCount + 1}`,
     };
 
-    await api.post("/api/blogs").set(auth).send(blog).timeout(5000).expect(400);
+    await api
+      .post("/api/blogs")
+      .set(user1.auth)
+      .send(blog)
+      .timeout(5000)
+      .expect(400);
     assert.strictEqual((await Blog.find({})).length, originalCount);
   });
 
   test("cannot be deleted when not authorized", async () => {
     const originalCount = (await Blog.find({})).length;
-    const blogToDelete = await Blog.findOne({ user: authUserId });
+    const blogToDelete = await Blog.findOne({ user: user1.id });
     assert.ok(blogToDelete);
 
     await api.delete(`/api/blogs/${blogToDelete.id}`).timeout(5000).expect(401);
@@ -166,13 +190,33 @@ describe("blogs", () => {
     assert.strictEqual((await Blog.find({ _id: blogToDelete.id })).length, 1);
   });
 
+  test("cannot be deleted when authorized as different user", async () => {
+    const originalCount = (await Blog.find({})).length;
+    const blogToDelete = await new Blog({
+      author: `Test Author ${originalCount + 1}`,
+      title: `Test Title ${originalCount + 1}`,
+      url: `http://testurl${originalCount + 1}.com`,
+      user: user1.id,
+    }).save();
+    assert.ok(blogToDelete);
+
+    await api
+      .delete(`/api/blogs/${blogToDelete._id}`)
+      .set(user2.auth)
+      .timeout(5000)
+      .expect(403);
+
+    assert.strictEqual((await Blog.find({})).length, originalCount + 1);
+    assert.strictEqual((await Blog.find({ _id: blogToDelete._id })).length, 1);
+  });
+
   test("can be deleted when authorized", async () => {
     const originalCount = (await Blog.find({})).length;
-    const blogToDelete = await Blog.findOne({ user: authUserId });
+    const blogToDelete = await Blog.findOne({ user: user1.id });
 
     await api
       .delete(`/api/blogs/${blogToDelete.id}`)
-      .set(auth)
+      .set(user1.auth)
       .timeout(5000)
       .expect(204);
 
@@ -181,7 +225,7 @@ describe("blogs", () => {
   });
 
   test("likes can be updated when authorized", async () => {
-    const blogToUpdate = await Blog.findOne({ user: authUserId });
+    const blogToUpdate = await Blog.findOne({ user: user1.id });
     const oldLikes = blogToUpdate.likes;
     const newLikes = oldLikes + 1;
 
@@ -193,7 +237,7 @@ describe("blogs", () => {
     };
     await api
       .put(`/api/blogs/${blogToUpdate._id}`)
-      .set(auth)
+      .set(user1.auth)
       .send(newBlog)
       .timeout(5000)
       .expect(200);
@@ -203,7 +247,7 @@ describe("blogs", () => {
   });
 
   test("likes cannot be updated when not authorized", async () => {
-    const blogToUpdate = await Blog.findOne({ user: authUserId });
+    const blogToUpdate = await Blog.findOne({ user: user1.id });
     const oldLikes = blogToUpdate.likes;
     const newLikes = oldLikes + 1;
 
@@ -236,7 +280,7 @@ describe("blogs", () => {
     const newBlog = (
       await api
         .post("/api/blogs")
-        .set(auth)
+        .set(user1.auth)
         .send(blog)
         .timeout(5000)
         .expect(201)
@@ -264,7 +308,7 @@ describe("blogs", () => {
     const newBlog = (
       await api
         .post("/api/blogs")
-        .set(auth)
+        .set(user1.auth)
         .send(blog)
         .timeout(5000)
         .expect(201)

@@ -31,7 +31,19 @@ blogsController.delete("/:id", async (request, response) => {
   if (!user) {
     return response.status(401).json({ error: "unauthorized" });
   }
-  await Blog.deleteOne({ _id: request.params.id, user: request.user.id });
+
+  const blog = await Blog.findById(request.params.id);
+
+  if (!blog) {
+    return response.status(404).json({ error: "blog not found" });
+  }
+
+  if (blog.user.toString() !== user.id.toString()) {
+    return response.status(403).json({ error: "forbidden" });
+  }
+
+  await Blog.deleteOne({ _id: request.params.id });
+
   response.status(204).end();
 });
 

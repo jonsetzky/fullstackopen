@@ -1,3 +1,4 @@
+const assert = require("assert");
 const logger = require("./logger");
 const jwt = require("jsonwebtoken");
 
@@ -49,7 +50,8 @@ const tokenExtractor = async (request, response, next) => {
     if (!decodedToken.id) {
       return response.status(401).json({ error: "token invalid" });
     }
-    const user = await User.findById(decodedToken.id);
+    const user = await User.findOne({ _id: decodedToken.id });
+    assert.ok(user);
     request.user = user;
     request.user.id = user._id.toString();
     delete request.user.password;
