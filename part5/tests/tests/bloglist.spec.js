@@ -174,5 +174,50 @@ describe("Blog app", () => {
 
       expect(deleteButton).not.toBeVisible();
     });
+
+    test("blogs are correctly sorted by likes", async ({ page }) => {
+      const blogs = [
+        {
+          title: "Least Liked Blog",
+          author: "Author A",
+          url: "http://leastliked.com",
+          likes: 1,
+        },
+        {
+          title: "Most Liked Blog",
+          author: "Author C",
+          url: "http://mostliked.com",
+          likes: 10,
+        },
+        {
+          title: "Moderately Liked Blog",
+          author: "Author B",
+          url: "http://moderatelyliked.com",
+          likes: 5,
+        },
+      ];
+
+      const dummyUser = await createDummyUser(page);
+      const createBlog = async (blog) => {
+        return await page.request.post("http://localhost:5173/api/blogs", {
+          data: blog,
+          headers: { Authorization: `Bearer ${dummyUser.token}` },
+        });
+      };
+
+      for (const blog of blogs) await createBlog(blog);
+
+      await page.reload();
+
+      await page.waitForResponse(
+        (resp) => resp.url().includes("/api/blogs") && resp.status() === 200,
+      );
+
+      const blogBoxes = await page.locator(".blog").all();
+
+      expect(await blogBoxes[0].innerText()).toContain("Most Liked Blog");
+      expect(await blogBoxes[1].innerText()).toContain("Moderately Liked Blog");
+      expect(await blogBoxes[2].innerText()).toContain("Least Liked Blog");
+    });
   });
 });

@@ -14,7 +14,7 @@ const Blog = ({ blog, updateBlog, user }) => {
   const [showDetails, setShowDetails] = useState(false);
 
   return (
-    <div style={blogStyle}>
+    <div className="blog" style={blogStyle}>
       <i>{blog.title}</i> by {blog.author}
       <button onClick={() => setShowDetails(!showDetails)}>
         {showDetails ? "collapse" : "expand"}
