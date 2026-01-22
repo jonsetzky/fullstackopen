@@ -60,7 +60,8 @@ const Blog = ({ blog, updateBlog, user }) => {
               </tr>
             </tbody>
           </table>
-          {blog.user !== undefined && blog.user.id == user.id ? (
+          {blog.user !== undefined &&
+          blog.user.id.toString() === user.id.toString() ? (
             <button
               onClick={async () => {
                 if (
