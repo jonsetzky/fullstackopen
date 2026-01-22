@@ -55,3 +55,50 @@ test("renders also url and likes when expanded", async () => {
   ).toBeDefined();
   expect(screen.queryByText("5", { exact: false })).toBeDefined();
 });
+
+test("clicking like twice calls update handler twice", async () => {
+  const user = {
+    id: "user123",
+    name: "Test User",
+    username: "testuser",
+  };
+  const blog = {
+    title: "test blog",
+    author: "tester",
+    url: "http://testblog.com",
+    likes: 5,
+    user,
+  };
+
+  vi.mock("../services/blogs", () => {
+    return {
+      default: {
+        update: vi.fn(() => ({
+          title: "test blog",
+          author: "tester",
+          url: "http://testblog.com",
+          likes: 5,
+          user: {
+            id: "user123",
+            name: "Test User",
+            username: "testuser",
+          },
+        })),
+      },
+    };
+  });
+
+  const mockHandler = vi.fn();
+
+  render(<Blog blog={blog} user={user} updateBlog={mockHandler} />);
+
+  const usr = userEvent.setup();
+  const button = screen.getByText("expand");
+  await usr.click(button);
+
+  const likeButton = screen.getByText("like");
+  await usr.click(likeButton);
+  await usr.click(likeButton);
+
+  expect(mockHandler.mock.calls).toHaveLength(2);
+});
