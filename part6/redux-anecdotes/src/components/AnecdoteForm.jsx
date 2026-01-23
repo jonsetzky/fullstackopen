@@ -1,10 +1,16 @@
 import { useState } from "react";
 import { addAnecdote } from "../reducers/anecdoteReducer";
 import { useDispatch } from "react-redux";
+import { showNotification } from "../util";
 
 const AnecdoteForm = () => {
   const dispatch = useDispatch();
   const [newAnecdote, setNewAnecdote] = useState("");
+
+  const create = (anecdote) => {
+    dispatch(addAnecdote(anecdote));
+    showNotification(dispatch, `you created '${anecdote}'`);
+  };
 
   return (
     <div>
@@ -12,7 +18,7 @@ const AnecdoteForm = () => {
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          dispatch(addAnecdote(newAnecdote));
+          create(newAnecdote);
           setNewAnecdote("");
         }}
       >
