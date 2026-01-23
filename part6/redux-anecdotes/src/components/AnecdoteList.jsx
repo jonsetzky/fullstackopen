@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { initializeAnecdotes, voteAnecdote } from "../reducers/anecdoteReducer";
 
-import { showNotification } from "../util";
+import { setNotification } from "../reducers/notificationReducer";
 
 const AnecdoteList = () => {
   const dispatch = useDispatch();
@@ -13,9 +13,11 @@ const AnecdoteList = () => {
   const vote = (id) => {
     console.log("vote", id);
     dispatch(voteAnecdote(id));
-    showNotification(
-      dispatch,
-      `you voted '${anecdotes.find((a) => a.id === id).content}'`,
+    dispatch(
+      setNotification(
+        `you voted '${anecdotes.find((a) => a.id === id).content}'`,
+        5,
+      ),
     );
   };
 

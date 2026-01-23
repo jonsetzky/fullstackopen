@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { appendAnecdote } from "../reducers/anecdoteReducer";
 import { useDispatch } from "react-redux";
-import { showNotification } from "../util";
+import { setNotification } from "../reducers/notificationReducer";
 
 const AnecdoteForm = () => {
   const dispatch = useDispatch();
@@ -9,7 +9,7 @@ const AnecdoteForm = () => {
 
   const create = async (anecdote) => {
     dispatch(appendAnecdote(anecdote));
-    showNotification(dispatch, `you created '${anecdote}'`);
+    dispatch(setNotification(`you created '${anecdote}'`, 5));
   };
 
   return (
