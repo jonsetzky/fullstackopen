@@ -1,3 +1,4 @@
+const assert = console.assert;
 const baseUrl = "http://localhost:3001/anecdotes";
 
 const getId = () => (100000 * Math.random()).toFixed(0);
@@ -30,4 +31,21 @@ const create = async (anecdote) => {
   return await response.json();
 };
 
-export default { getAll, create };
+// updates based on newObject.id
+const update = async (newObject) => {
+  assert("id" in newObject);
+  assert("content" in newObject);
+  assert("votes" in newObject);
+
+  const response = await fetch(`${baseUrl}/${newObject.id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(newObject),
+  });
+
+  return await response.json();
+};
+
+export default { getAll, create, update };
