@@ -13,6 +13,14 @@ const AnecdoteForm = () => {
       queryClient.invalidateQueries({ queryKey: ['anecdotes'] })
       setNotification(`Anecdote '${newAnecdote.content}' created`)
     },
+    onError: (error) => {
+      console.log(error)
+      if (typeof error === 'string') {
+        setNotification(`Error: ${error}`)
+        return
+      }
+      setNotification('An unknown error occurred while creating anecdote')
+    },
   })
 
   const onCreate = (event) => {
