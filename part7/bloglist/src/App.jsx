@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import Blog from "./components/Blog";
 import blogService from "./services/blogs";
-import loginService from "./services/login";
 import CreateBlog from "./components/CreateBlog";
 import { AxiosError } from "axios";
 import Notification from "./components/Notification";
@@ -9,33 +8,31 @@ import { setNotification } from "./reducers/notificationReducer";
 import { useDispatch } from "react-redux";
 import { initializeBlogs } from "./reducers/bloglistReducer";
 import { BlogList } from "./components/BlogList";
+import { useSelector } from "react-redux";
+import { login, logout, reloadSession } from "./reducers/localUserReducer";
 
 const App = () => {
   const dispatch = useDispatch();
+  const localUser = useSelector((state) => state.localUser);
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [user, setUser] = useState(null);
 
   useEffect(() => {
-    const loggedUserJSON = window.localStorage.getItem("loggedBlogUser");
-    if (loggedUserJSON) {
-      const user = JSON.parse(loggedUserJSON);
-      setUser(user);
-      blogService.setToken(user.token);
-    }
-
-    dispatch(initializeBlogs());
+    dispatch(reloadSession());
   }, []);
+
+  useEffect(() => {
+    if (localUser) {
+      dispatch(initializeBlogs());
+      blogService.setToken(localUser.token);
+    }
+  }, [localUser]);
 
   const handleLogin = async (event) => {
     event.preventDefault();
     try {
-      const user = await loginService.login(username, password);
-      window.localStorage.setItem("loggedBlogUser", JSON.stringify(user));
-      blogService.setToken(user.token);
-
-      setUser(user);
+      await dispatch(login(username, password));
       setUsername("");
       setPassword("");
     } catch (exception) {
@@ -51,11 +48,10 @@ const App = () => {
 
   const logOut = (event) => {
     event.preventDefault();
-    window.localStorage.removeItem("loggedBlogUser");
-    setUser(null);
+    dispatch(logout(username, password));
   };
 
-  if (!user) {
+  if (!localUser) {
     return (
       <div>
         <Notification />
@@ -92,14 +88,14 @@ const App = () => {
       <Notification />
       <h2>blogs</h2>
       <p>
-        {user.name || user.username} logged in
+        {localUser.name || localUser.username} logged in
         <button onClick={logOut}>logout</button>
       </p>
       <div>
-        <CreateBlog user={user} />
+        <CreateBlog user={localUser} />
       </div>
       <div />
-      <BlogList user={user} />
+      <BlogList user={localUser} />
     </div>
   );
 };
