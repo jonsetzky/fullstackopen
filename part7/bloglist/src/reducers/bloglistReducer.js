@@ -1,6 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
 import blogs from "../services/blogs";
-import usersService from "../services/users";
 
 /**
  * @typedef {{title: string,
@@ -67,21 +66,17 @@ export const initializeBlogs = () => {
 };
 
 /**
- *
  * @param {Blog} newBlog
  */
 export const createBlog = (newBlog) => {
-  return async (dispatch) => {
+  return async (dispatch, getState) => {
     const createdBlog = await blogs.create(newBlog);
-    // todo use users store for this in order to avoid two requests
-    // -> just use the local user if it'll be stored in state!
-    const users = await usersService.getAll();
-    const user = users.find((u) => u.id === createdBlog.user);
-    if (!user) {
-      throw new Error(
-        "coudln't find local user from users when creating a blog",
-      );
-    }
+
+    // localuser fortunately has username and user fields so we'll use them
+    // todo this is a glue fix because displaying blogs only uses user.name and user.username
+    //  to make more robust, entire user object should be used (as blogs.getAll() also returns)
+    const { token: _, ...user } = getState().localUser;
+
     dispatch(set({ ...createdBlog, user }));
   };
 };
