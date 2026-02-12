@@ -7,19 +7,17 @@ import { AxiosError } from "axios";
 import Notification from "./components/Notification";
 import { setNotification } from "./reducers/notificationReducer";
 import { useDispatch } from "react-redux";
+import { initializeBlogs } from "./reducers/bloglistReducer";
 
 const App = () => {
   const dispatch = useDispatch();
 
-  const [blogs, setBlogs] = useState([]);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [user, setUser] = useState(null);
 
-  const [showNewBlogForm, setShowNewBlogForm] = useState(false);
-
   useEffect(() => {
-    blogService.getAll().then((blogs) => setBlogs(blogs));
+    dispatch(initializeBlogs());
   }, []);
 
   useEffect(() => {
@@ -99,20 +97,7 @@ const App = () => {
         <button onClick={logOut}>logout</button>
       </p>
       <div>
-        {showNewBlogForm ? (
-          <CreateBlog
-            onAddBlog={(newBlog) => {
-              setBlogs(blogs.concat(newBlog));
-              setShowNewBlogForm(false);
-            }}
-            user={user}
-          />
-        ) : (
-          <></>
-        )}
-        <button onClick={() => setShowNewBlogForm(!showNewBlogForm)}>
-          {showNewBlogForm ? "cancel" : "create new blog"}
-        </button>
+        <CreateBlog user={user} />
       </div>
       <div />
       {blogs
