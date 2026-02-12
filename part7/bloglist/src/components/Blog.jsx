@@ -1,8 +1,24 @@
 import { useState } from "react";
 
-import blogService from "../services/blogs";
+import { useDispatch } from "react-redux";
+import { likeBlog, removeBlog } from "../reducers/bloglistReducer";
 
-const Blog = ({ blog, updateBlog, user }) => {
+/*
+
+
+            updateBlog={(updatedBlog) => {
+              if (updatedBlog.remove) {
+                setBlogs(blogs.filter((b) => b.id !== updatedBlog.id));
+                return;
+              }
+              setBlogs(
+                blogs.map((b) => (b.id === updatedBlog.id ? updatedBlog : b)),
+              );
+            }}*/
+
+const Blog = ({ blog, user }) => {
+  let dispatch = useDispatch();
+
   const blogStyle = {
     paddingTop: 10,
     paddingLeft: 2,
@@ -41,12 +57,7 @@ const Blog = ({ blog, updateBlog, user }) => {
                 <td>
                   <button
                     onClick={async () => {
-                      const updatedBlog = { ...blog, likes: blog.likes + 1 };
-                      updateBlog(updatedBlog);
-                      await blogService.update(blog.id, {
-                        ...updatedBlog,
-                        user: blog.user.id,
-                      });
+                      dispatch(likeBlog(blog.id));
                     }}
                   >
                     like
@@ -68,8 +79,7 @@ const Blog = ({ blog, updateBlog, user }) => {
                     `remove blog "${blog.title}" by ${blog.author}?`,
                   )
                 ) {
-                  await blogService.remove(blog.id);
-                  updateBlog({ id: blog.id, remove: true });
+                  dispatch(removeBlog(blog.id));
                 }
               }}
             >

@@ -38,14 +38,16 @@ const bloglistSlice = createSlice({
      * @param {{payload: Blog}} action
      */
     set(state, action) {
-      return ({ ...state }[action.payload.id] = action.payload);
+      let newState = { ...state };
+      newState[action.payload.id] = action.payload;
+      return newState;
     },
 
     /**
      * @param {BloglistState} state
      * @param {{payload: string}} action payload is blog's id
      */
-    delete(state, action) {
+    del(state, action) {
       let newState = { ...state };
       delete newState[action.payload];
       return newState;
@@ -53,11 +55,12 @@ const bloglistSlice = createSlice({
   },
 });
 
-const { add, set, setAll, del } = bloglistSlice.actions;
+const { set, setAll, del } = bloglistSlice.actions;
 
 export const initializeBlogs = () => {
   return async (dispatch) => {
     const newBlogs = await blogs.getAll();
+    console.log("initialized blogs with", newBlogs);
     dispatch(setAll(newBlogs));
   };
 };
@@ -68,8 +71,8 @@ export const initializeBlogs = () => {
  */
 export const createBlog = (newBlog) => {
   return async (dispatch) => {
-    const newBlogs = await blogs.create(newBlog);
-    dispatch(add(newBlogs));
+    const createdBlog = await blogs.create(newBlog);
+    dispatch(set(createdBlog));
   };
 };
 
@@ -78,9 +81,14 @@ export const createBlog = (newBlog) => {
  * @param {Blog} newBlog
  */
 export const updateBlog = (id, newBlog) => {
-  return async (dispatch) => {
+  return async (dispatch, getState) => {
+    let oldBlog = getState().bloglist[id];
+
+    delete newBlog["id"];
+    delete newBlog["user"];
+
     const updatedBlog = await blogs.update(id, newBlog);
-    dispatch(set(updatedBlog));
+    dispatch(set({ ...updatedBlog, user: oldBlog.user }));
   };
 };
 
@@ -97,12 +105,23 @@ export const removeBlog = (id) => {
 
 export const likeBlog = (id) => {
   return async (dispatch, getState) => {
-    let blog = getState()[id];
+    let blog = getState().bloglist[id];
+
     if (!blog) {
       throw new Error("trying to like a blog that doesn't exist in state");
     }
-    const newBlog = blogs.update(blog.id, { ...blog, likes: blog.likes + 1 });
-    dispatch(set(newBlog));
+
+    console.log("sending", {
+      ...blog,
+      likes: blog.likes + 1,
+    });
+
+    await dispatch(
+      updateBlog(id, {
+        ...blog,
+        likes: blog.likes + 1,
+      }),
+    );
   };
 };
 

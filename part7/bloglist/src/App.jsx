@@ -8,6 +8,7 @@ import Notification from "./components/Notification";
 import { setNotification } from "./reducers/notificationReducer";
 import { useDispatch } from "react-redux";
 import { initializeBlogs } from "./reducers/bloglistReducer";
+import { BlogList } from "./components/BlogList";
 
 const App = () => {
   const dispatch = useDispatch();
@@ -17,16 +18,14 @@ const App = () => {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    dispatch(initializeBlogs());
-  }, []);
-
-  useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem("loggedBlogUser");
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON);
       setUser(user);
       blogService.setToken(user.token);
     }
+
+    dispatch(initializeBlogs());
   }, []);
 
   const handleLogin = async (event) => {
@@ -100,24 +99,7 @@ const App = () => {
         <CreateBlog user={user} />
       </div>
       <div />
-      {blogs
-        .sort((a, b) => b.likes - a.likes)
-        .map((blog) => (
-          <Blog
-            key={blog.id}
-            user={user}
-            blog={blog}
-            updateBlog={(updatedBlog) => {
-              if (updatedBlog.remove) {
-                setBlogs(blogs.filter((b) => b.id !== updatedBlog.id));
-                return;
-              }
-              setBlogs(
-                blogs.map((b) => (b.id === updatedBlog.id ? updatedBlog : b)),
-              );
-            }}
-          />
-        ))}
+      <BlogList user={user} />
     </div>
   );
 };
