@@ -31,6 +31,7 @@ const bloglistSlice = createSlice({
       });
       return out;
     },
+
     /**
      * sets a blog based on its id
      * @param {BloglistState} state
@@ -39,6 +40,7 @@ const bloglistSlice = createSlice({
     set(state, action) {
       return ({ ...state }[action.payload.id] = action.payload);
     },
+
     /**
      * @param {BloglistState} state
      * @param {{payload: string}} action payload is blog's id
@@ -55,7 +57,7 @@ const { add, set, setAll, del } = bloglistSlice.actions;
 
 export const initializeBlogs = () => {
   return async (dispatch) => {
-    let newBlogs = await blogs.getAll();
+    const newBlogs = await blogs.getAll();
     dispatch(setAll(newBlogs));
   };
 };
@@ -66,7 +68,7 @@ export const initializeBlogs = () => {
  */
 export const createBlog = (newBlog) => {
   return async (dispatch) => {
-    let newBlogs = await blogs.create(newBlog);
+    const newBlogs = await blogs.create(newBlog);
     dispatch(add(newBlogs));
   };
 };
@@ -77,7 +79,7 @@ export const createBlog = (newBlog) => {
  */
 export const updateBlog = (id, newBlog) => {
   return async (dispatch) => {
-    let updatedBlog = await blogs.update(id, newBlog);
+    const updatedBlog = await blogs.update(id, newBlog);
     dispatch(set(updatedBlog));
   };
 };
@@ -86,10 +88,21 @@ export const updateBlog = (id, newBlog) => {
  *
  * @param {string} id blog's id
  */
-export const remove = (id) => {
+export const removeBlog = (id) => {
   return async (dispatch) => {
     await blogs.remove(id);
     dispatch(del(id));
+  };
+};
+
+export const likeBlog = (id) => {
+  return async (dispatch, getState) => {
+    let blog = getState()[id];
+    if (!blog) {
+      throw new Error("trying to like a blog that doesn't exist in state");
+    }
+    const newBlog = blogs.update(blog.id, { ...blog, likes: blog.likes + 1 });
+    dispatch(set(newBlog));
   };
 };
 
