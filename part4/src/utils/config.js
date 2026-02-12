@@ -1,4 +1,14 @@
-require("dotenv").config();
+const fs = require("fs");
+const path = require("path");
+const dotenv = require("dotenv");
+
+if (!fs.existsSync(path.resolve(process.cwd(), ".env"))) {
+  throw new Error(
+    "Missing .env file. It's required for connecting to MongoDB.",
+  );
+}
+
+dotenv.config();
 
 const PORT = process.env.PORT || 3003;
 const MONGODB_URL =
