@@ -1,5 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import blogs from "../services/blogs";
+import usersService from "../services/users";
 
 /**
  * @typedef {{title: string,
@@ -72,7 +73,16 @@ export const initializeBlogs = () => {
 export const createBlog = (newBlog) => {
   return async (dispatch) => {
     const createdBlog = await blogs.create(newBlog);
-    dispatch(set(createdBlog));
+    // todo use users store for this in order to avoid two requests
+    // -> just use the local user if it'll be stored in state!
+    const users = await usersService.getAll();
+    const user = users.find((u) => u.id === createdBlog.user);
+    if (!user) {
+      throw new Error(
+        "coudln't find local user from users when creating a blog",
+      );
+    }
+    dispatch(set({ ...createdBlog, user }));
   };
 };
 
@@ -110,11 +120,6 @@ export const likeBlog = (id) => {
     if (!blog) {
       throw new Error("trying to like a blog that doesn't exist in state");
     }
-
-    console.log("sending", {
-      ...blog,
-      likes: blog.likes + 1,
-    });
 
     await dispatch(
       updateBlog(id, {
