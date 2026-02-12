@@ -33,11 +33,7 @@ test("calls blog update callback with correct details", async () => {
   const mockHandler = vi.fn();
 
   const { container } = render(
-    <CreateBlog
-      onAddBlog={mockHandler}
-      user={user}
-      showNotification={() => {}}
-    />,
+    <CreateBlog onAddBlog={mockHandler} user={user} />,
   );
 
   const usr = userEvent.setup();

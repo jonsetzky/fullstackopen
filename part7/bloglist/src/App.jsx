@@ -5,9 +5,12 @@ import loginService from "./services/login";
 import CreateBlog from "./components/CreateBlog";
 import { AxiosError } from "axios";
 import Notification from "./components/Notification";
+import { setNotification } from "./reducers/notificationReducer";
+import { useDispatch } from "react-redux";
 
 const App = () => {
-  const [notification, setNotification] = useState(null);
+  const dispatch = useDispatch();
+
   const [blogs, setBlogs] = useState([]);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -41,7 +44,7 @@ const App = () => {
     } catch (exception) {
       if (exception instanceof AxiosError) {
         if (exception.response) {
-          showNotification(exception.response.data.error, true);
+          dispatch(setNotification(exception.response.data.error, 5000, true));
           return;
         }
       }
@@ -55,25 +58,10 @@ const App = () => {
     setUser(null);
   };
 
-  const showNotification = (message, isError = false) => {
-    const NOTIFICATION_TIMEOUT = 5000;
-
-    clearTimeout(notification?.lastTimeout);
-    const lastTimeout = setTimeout(
-      () => setNotification(null),
-      NOTIFICATION_TIMEOUT,
-    );
-
-    setNotification({ message, isError, lastTimeout });
-  };
-
   if (!user) {
     return (
       <div>
-        <Notification
-          message={notification?.message}
-          isError={notification?.isError}
-        />
+        <Notification />
         <h1>log in to application</h1>
         <form onSubmit={handleLogin}>
           <div>
@@ -104,10 +92,7 @@ const App = () => {
 
   return (
     <div>
-      <Notification
-        message={notification?.message}
-        isError={notification?.isError}
-      />
+      <Notification />
       <h2>blogs</h2>
       <p>
         {user.name || user.username} logged in
@@ -120,7 +105,6 @@ const App = () => {
               setBlogs(blogs.concat(newBlog));
               setShowNewBlogForm(false);
             }}
-            showNotification={showNotification}
             user={user}
           />
         ) : (

@@ -3,8 +3,12 @@ import { useState } from "react";
 import TextInput from "./TextInput";
 
 import blogService from "../services/blogs";
+import { setNotification } from "../reducers/notificationReducer";
+import { useDispatch } from "react-redux";
 
-const CreateBlog = ({ onAddBlog, showNotification, user }) => {
+const CreateBlog = ({ onAddBlog, user }) => {
+  const dispatch = useDispatch();
+
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
   const [url, setUrl] = useState("");
@@ -21,8 +25,11 @@ const CreateBlog = ({ onAddBlog, showNotification, user }) => {
     setAuthor("");
     setUrl("");
     onAddBlog({ ...newBlog, user });
-    showNotification(
-      `a new blog "${newBlog.title}" by ${newBlog.author} added successfully`,
+
+    dispatch(
+      setNotification(
+        `a new blog "${newBlog.title}" by ${newBlog.author} added successfully`,
+      ),
     );
   };
   return (

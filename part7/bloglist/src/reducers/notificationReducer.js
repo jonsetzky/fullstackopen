@@ -1,6 +1,9 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-const initialState = "test notification";
+/**
+ * @type {{message: string, isError: boolean}|null}
+ */
+const initialState = null;
 
 const notificationSlice = createSlice({
   name: "notification",
@@ -17,17 +20,15 @@ const notificationSlice = createSlice({
 
 const { _setNotification, _removeNotification } = notificationSlice.actions;
 
-export const setNotification = (message, timeout) => {
+export const setNotification = (message, timeout = 5000, isError = false) => {
   return async (dispatch, getState) => {
-    dispatch(_setNotification(message));
+    dispatch(_setNotification({ message, isError }));
 
-    return new Promise((resolve) => setTimeout(resolve, timeout * 1000)).then(
-      () => {
-        if (Object.is(getState().notification, message)) {
-          dispatch(_removeNotification());
-        }
-      },
-    );
+    return new Promise((resolve) => setTimeout(resolve, timeout)).then(() => {
+      if (Object.is(getState().notification.message, message)) {
+        dispatch(_removeNotification());
+      }
+    });
   };
 };
 export default notificationSlice.reducer;
