@@ -37,6 +37,11 @@ const AnecdoteList = ({ anecdotes }) => (
 const Anecdote = ({ anecdotes }) => {
   const id = useParams().id;
   const anecdote = anecdotes.find((a) => a.id == id);
+
+  if (!anecdote) {
+    return <p>anecdote not found</p>;
+  }
+
   return (
     <div>
       <h2>
