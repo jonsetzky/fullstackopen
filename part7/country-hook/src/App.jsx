@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 
+const API_BASE_URL = "https://studies.cs.helsinki.fi/restcountries/api";
+const SHORTEST_COUNTRY_NAME_LEN = 2; // todo is this real?
+
 const useField = (type) => {
   const [value, setValue] = useState("");
 
@@ -18,7 +21,26 @@ const useField = (type) => {
 const useCountry = (name) => {
   const [country, setCountry] = useState(null);
 
-  useEffect(async () => {});
+  useEffect(() => {
+    if (name.length < SHORTEST_COUNTRY_NAME_LEN) return;
+
+    (async () => {
+      try {
+        let resp = await axios.get(`${API_BASE_URL}/name/${name}`);
+        setCountry({
+          found: true,
+          data: {
+            name: resp.data.name.common,
+            capital: resp.data.capital.join(", "),
+            population: resp.data.population,
+            flag: resp.data.flags.png,
+          },
+        });
+      } catch (err) {
+        setCountry({ found: false });
+      }
+    })();
+  }, [name]);
 
   return country;
 };
