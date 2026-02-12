@@ -1,12 +1,6 @@
 import { useState } from "react";
 
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  Link,
-  useParams,
-} from "react-router-dom";
+import { Routes, Route, Link, useParams, useNavigate } from "react-router-dom";
 
 const Menu = () => {
   const padding = {
@@ -142,6 +136,8 @@ const CreateNew = (props) => {
 };
 
 const App = () => {
+  const nav = useNavigate();
+
   const [anecdotes, setAnecdotes] = useState([
     {
       content: "If it hurts, do it more often",
@@ -164,6 +160,11 @@ const App = () => {
   const addNew = (anecdote) => {
     anecdote.id = Math.round(Math.random() * 10000);
     setAnecdotes(anecdotes.concat(anecdote));
+    nav("/");
+    setNotification(`a new anecdote "${anecdote.content}" created!`);
+
+    // todo fix flakiness when two notifications set within 5 secs of each other
+    setTimeout(() => setNotification(""), 5000);
   };
 
   const anecdoteById = (id) => anecdotes.find((a) => a.id === id);
@@ -180,8 +181,10 @@ const App = () => {
   };
 
   return (
-    <Router>
+    <div>
       <h1>Software anecdotes</h1>
+      {notification.length == 0 ? <></> : <p>{notification}</p>}
+
       <Menu />
       <Routes>
         <Route path="/" element={<AnecdoteList anecdotes={anecdotes} />} />
@@ -191,7 +194,7 @@ const App = () => {
       </Routes>
 
       <Footer />
-    </Router>
+    </div>
   );
 };
 
