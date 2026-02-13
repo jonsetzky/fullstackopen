@@ -12,6 +12,7 @@ import { useSelector } from "react-redux";
 import { login, logout, reloadSession } from "./reducers/localUserReducer";
 import { Route, Routes } from "react-router-dom";
 import { Blogs } from "./components/routes/Blogs";
+import { initializeUsers } from "./reducers/usersReducer";
 
 const App = () => {
   const dispatch = useDispatch();
@@ -27,6 +28,7 @@ const App = () => {
   useEffect(() => {
     if (localUser) {
       dispatch(initializeBlogs());
+      dispatch(initializeUsers());
       blogService.setToken(localUser.token);
     }
   }, [localUser]);
