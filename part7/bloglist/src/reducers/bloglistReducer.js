@@ -72,12 +72,10 @@ export const createBlog = (newBlog) => {
   return async (dispatch, getState) => {
     const createdBlog = await blogs.create(newBlog);
 
-    // localuser fortunately has username and user fields so we'll use them
-    // todo this is a glue fix because displaying blogs only uses user.name and user.username
-    //  to make more robust, entire user object should be used (as blogs.getAll() also returns)
     const { token: _, ...user } = getState().localUser;
+    const fullUser = getState().users.find((u) => u.id === user.id);
 
-    dispatch(set({ ...createdBlog, user }));
+    dispatch(set({ ...createdBlog, user: fullUser }));
   };
 };
 
