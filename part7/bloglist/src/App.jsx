@@ -9,13 +9,14 @@ import { useDispatch } from "react-redux";
 import { initializeBlogs } from "./reducers/bloglistReducer";
 import { BlogList } from "./components/BlogList";
 import { useSelector } from "react-redux";
-import { login, logout, reloadSession } from "./reducers/localUserReducer";
-import { Route, Routes } from "react-router-dom";
+import { login, reloadSession } from "./reducers/localUserReducer";
+import { Link, Route, Routes } from "react-router-dom";
 import { Blogs } from "./components/routes/Blogs";
 import { initializeUsers } from "./reducers/usersReducer";
 import { Users } from "./components/routes/Users";
 import { UserDetails } from "./components/routes/UserDetails";
 import { BlogDetails } from "./components/routes/BlogDetails";
+import { Navigation } from "./components/Navigation";
 
 const App = () => {
   const dispatch = useDispatch();
@@ -53,11 +54,6 @@ const App = () => {
     }
   };
 
-  const logOut = (event) => {
-    event.preventDefault();
-    dispatch(logout(username, password));
-  };
-
   if (!localUser) {
     return (
       <div>
@@ -92,12 +88,9 @@ const App = () => {
 
   return (
     <div>
+      <Navigation />
       <Notification />
       <h2>blogs</h2>
-      <p>
-        {localUser.name || localUser.username} logged in
-        <button onClick={logOut}>logout</button>
-      </p>
       <Routes>
         <Route path="/" element={<Blogs />} />
         <Route path="/blogs/:id" element={<BlogDetails />} />
