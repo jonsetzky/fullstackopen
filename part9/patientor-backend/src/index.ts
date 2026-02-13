@@ -1,8 +1,9 @@
-import express, { Request, Response } from "express";
+import express, { Response } from "express";
 import cors from "cors";
 import { v4 as uuid } from "uuid";
 import diagnoses, { Diagnosis } from "./data/diagnoses";
 import patients, {
+  genderFromString,
   getNonSensitivePatients,
   NonSensitivePatient,
   Patient,
@@ -25,8 +26,31 @@ app.get("/api/patients", (_req, res: Response<NonSensitivePatient[]>) => {
   res.json(getNonSensitivePatients());
 });
 
-app.post("/api/patients", (req: Request<Omit<Patient, "id">>, res) => {
-  patients.push({ ...req.body, id: uuid() });
+const validateNewPatientBody = (
+  value: unknown,
+): value is Omit<Patient, "id" | "gender"> & { gender: string } => {
+  if (typeof value !== "object" || !value) return false;
+  if (!("name" in value) || typeof value.name !== "string") return false;
+  if (!("dateOfBirth" in value) || typeof value.dateOfBirth !== "string")
+    return false;
+  if (!("ssn" in value) || typeof value.ssn !== "string") return false;
+  if (!("gender" in value) || typeof value.gender !== "string") return false;
+  if (!("occupation" in value) || typeof value.occupation !== "string")
+    return false;
+  return true;
+};
+
+app.post("/api/patients", (req, res) => {
+  if (!validateNewPatientBody(req.body)) {
+    res.status(400).json({ error: "malformed request body" });
+    return;
+  }
+
+  patients.push({
+    ...req.body,
+    id: uuid(),
+    gender: genderFromString(req.body.gender),
+  });
   res.status(200).json({ success: "patient added" });
 });
 

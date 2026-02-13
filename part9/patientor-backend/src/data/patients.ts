@@ -1,10 +1,16 @@
+export enum Gender {
+  Male = "male",
+  Female = "female",
+  Other = "other",
+}
+
 let data: Patient[] = [
   {
     id: "d2773336-f723-11e9-8f0b-362b9e155667",
     name: "John McClane",
     dateOfBirth: "1986-07-09",
     ssn: "090786-122X",
-    gender: "male",
+    gender: Gender.Male,
     occupation: "New york city cop",
   },
   {
@@ -12,7 +18,7 @@ let data: Patient[] = [
     name: "Martin Riggs",
     dateOfBirth: "1979-01-30",
     ssn: "300179-77A",
-    gender: "male",
+    gender: Gender.Male,
     occupation: "Cop",
   },
   {
@@ -20,7 +26,7 @@ let data: Patient[] = [
     name: "Hans Gruber",
     dateOfBirth: "1970-04-25",
     ssn: "250470-555L",
-    gender: "other",
+    gender: Gender.Other,
     occupation: "Technician",
   },
   {
@@ -28,7 +34,7 @@ let data: Patient[] = [
     name: "Dana Scully",
     dateOfBirth: "1974-01-05",
     ssn: "050174-432N",
-    gender: "female",
+    gender: Gender.Female,
     occupation: "Forensic Pathologist",
   },
   {
@@ -36,17 +42,26 @@ let data: Patient[] = [
     name: "Matti Luukkainen",
     dateOfBirth: "1971-04-09",
     ssn: "090471-8890",
-    gender: "male",
+    gender: Gender.Male,
     occupation: "Digital evangelist",
   },
-];
+].map((p) => ({
+  ...p,
+  gender: genderFromString(p.gender),
+}));
+
+export function genderFromString(gender: string): Gender {
+  if (gender === "female") return Gender.Female;
+  if (gender === "male") return Gender.Male;
+  return Gender.Other;
+}
 
 export type Patient = {
-  id: `${string}-${string}-${string}-${string}-${string}`;
-  name: `${string} ${string}`;
-  dateOfBirth: `${number}-${number}-${number}`;
-  ssn: `${string}-${string}`;
-  gender: string;
+  id: string;
+  name: string;
+  dateOfBirth: string;
+  ssn: string;
+  gender: Gender;
   occupation: string;
 };
 
