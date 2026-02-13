@@ -117,7 +117,6 @@ const App = () => {
     <div>
       <Navigation />
       <Notification />
-      <h2>blogs</h2>
       <Routes>
         <Route path="/" element={<Blogs />} />
         <Route path="/blogs/:id" element={<BlogDetails />} />

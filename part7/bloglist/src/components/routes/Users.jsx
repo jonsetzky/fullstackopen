@@ -7,11 +7,10 @@ export const Users = () => {
 
   return (
     <div>
-      <h1>Users</h1>
       <table>
         <thead>
           <tr>
-            <th />
+            <th>username</th>
             <th>blogs created</th>
           </tr>
         </thead>
