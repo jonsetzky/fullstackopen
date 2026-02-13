@@ -10,6 +10,8 @@ import { initializeBlogs } from "./reducers/bloglistReducer";
 import { BlogList } from "./components/BlogList";
 import { useSelector } from "react-redux";
 import { login, logout, reloadSession } from "./reducers/localUserReducer";
+import { Route, Routes } from "react-router-dom";
+import { Blogs } from "./components/routes/Blogs";
 
 const App = () => {
   const dispatch = useDispatch();
@@ -91,11 +93,9 @@ const App = () => {
         {localUser.name || localUser.username} logged in
         <button onClick={logOut}>logout</button>
       </p>
-      <div>
-        <CreateBlog user={localUser} />
-      </div>
-      <div />
-      <BlogList user={localUser} />
+      <Routes>
+        <Route path="/" element={<Blogs />} />
+      </Routes>
     </div>
   );
 };

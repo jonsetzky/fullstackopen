@@ -1,23 +1,12 @@
 import { useState } from "react";
 
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { likeBlog, removeBlog } from "../reducers/bloglistReducer";
 
-/*
-
-
-            updateBlog={(updatedBlog) => {
-              if (updatedBlog.remove) {
-                setBlogs(blogs.filter((b) => b.id !== updatedBlog.id));
-                return;
-              }
-              setBlogs(
-                blogs.map((b) => (b.id === updatedBlog.id ? updatedBlog : b)),
-              );
-            }}*/
-
-const Blog = ({ blog, user }) => {
+const Blog = ({ blog }) => {
   let dispatch = useDispatch();
+
+  const localUser = useSelector((state) => state.localUser);
 
   const blogStyle = {
     paddingTop: 10,
@@ -71,7 +60,7 @@ const Blog = ({ blog, user }) => {
             </tbody>
           </table>
           {blog.user !== undefined &&
-          blog.user.id.toString() === user.id.toString() ? (
+          blog.user.id.toString() === localUser.id.toString() ? (
             <button
               onClick={async () => {
                 if (
