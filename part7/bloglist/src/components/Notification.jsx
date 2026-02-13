@@ -7,14 +7,9 @@ export const Notification = () => {
   if (notification === null) return <></>;
   return (
     <div
+      className="absolute top-32 p-2.5 rounded-md border-solid text-xl bg-gray-200"
       style={{
         color: notification.isError ? "red" : "green",
-        background: "lightgrey",
-        fontSize: "20px",
-        borderStyle: "solid",
-        borderRadius: "5px",
-        padding: "10px",
-        marginBottom: "10px",
       }}
     >
       {notification.message}
