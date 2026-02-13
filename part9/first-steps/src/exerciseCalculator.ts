@@ -35,7 +35,7 @@ if (require.main === module) {
   }
 
   const target = Number(process.argv[2]);
-  let dailyHours: number[] = process.argv.slice(3).map(Number);
+  const dailyHours: number[] = process.argv.slice(3).map(Number);
 
   console.log(calculateExercises(dailyHours, target));
 }
