@@ -13,6 +13,7 @@ import { login, logout, reloadSession } from "./reducers/localUserReducer";
 import { Route, Routes } from "react-router-dom";
 import { Blogs } from "./components/routes/Blogs";
 import { initializeUsers } from "./reducers/usersReducer";
+import { Users } from "./components/routes/Users";
 
 const App = () => {
   const dispatch = useDispatch();
@@ -97,6 +98,7 @@ const App = () => {
       </p>
       <Routes>
         <Route path="/" element={<Blogs />} />
+        <Route path="/users" element={<Users />} />
       </Routes>
     </div>
   );

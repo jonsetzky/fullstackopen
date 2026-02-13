@@ -13,7 +13,7 @@ import usersService from "../services/users";
 /**
  * @type {UsersState}
  */
-const initialState = {};
+const initialState = [];
 
 const usersSlice = createSlice({
   name: "users",
