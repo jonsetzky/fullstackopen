@@ -41,20 +41,26 @@ const CreateBlog = () => {
           <h1>create new blog</h1>
           <form onSubmit={handleBlogCreate}>
             <TextInput
+              labelClassName="w-20"
               id="blog-title"
               label="title"
+              placeholder="Sample Title"
               value={title}
               setValue={setTitle}
             />
             <TextInput
+              labelClassName="w-20"
               id="blog-author"
               label="author"
+              placeholder="Sample Author"
               value={author}
               setValue={setAuthor}
             />
             <TextInput
+              labelClassName="w-20"
               id="blog-url"
               label="url"
+              placeholder="http://example.com"
               value={url}
               setValue={setUrl}
             />

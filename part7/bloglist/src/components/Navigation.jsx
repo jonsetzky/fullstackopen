@@ -9,7 +9,7 @@ const LinkWrapper = (props) => {
     <Link
       to={props.to}
       className={
-        props.className +
+        (props.className || "") +
         " select-none " +
         (path.pathname === props.to ? "underline" : "")
       }

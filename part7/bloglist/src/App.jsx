@@ -85,9 +85,7 @@ const App = () => {
                   setValue={setPassword}
                 />
               </div>
-              <button className="border rounded-sm p-2" type="submit">
-                Log In
-              </button>
+              <button type="submit">Log In</button>
             </div>
           </form>
           <div className="flex-1" />

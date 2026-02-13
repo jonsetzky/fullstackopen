@@ -1,1 +1,16 @@
 @import "tailwindcss";
+
+@layer base {
+  button {
+    border-style: var(--tw-border-style);
+    border-width: 1px;
+    border-radius: var(--radius-sm);
+    padding: calc(var(--spacing) * 2);
+  }
+  input {
+    border-bottom-style: var(--tw-border-style);
+    border-bottom-width: 1px;
+    outline-style: var(--tw-outline-style);
+    outline-width: 0px;
+  }
+}
