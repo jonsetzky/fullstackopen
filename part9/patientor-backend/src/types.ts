@@ -4,9 +4,6 @@ export enum Gender {
   Other = "other",
 }
 
-// eslint-disable-next-line @typescript-eslint/no-empty-object-type
-export interface Entry {}
-
 export interface Patient {
   id: string;
   name: string;
@@ -18,3 +15,30 @@ export interface Patient {
 }
 
 export type NonSensitivePatient = Omit<Patient, "ssn" | "entries">;
+
+export type Date = string;
+
+export interface EntryBase {
+  id: string;
+  date: Date;
+  specialist: string;
+  diagnosisCodes: string[];
+  description: string;
+}
+export interface HospitalEntry extends EntryBase {
+  type: "Hospital";
+  discharge: {
+    date: Date;
+    criteria: string;
+  };
+}
+export interface OccupationalHealthcareEntry extends EntryBase {
+  type: "OccupationalHealthcare";
+  employerName: string;
+  sickLeave: {
+    startDate: Date;
+    endDate: Date;
+  };
+}
+
+export type Entry = OccupationalHealthcareEntry | HospitalEntry;
