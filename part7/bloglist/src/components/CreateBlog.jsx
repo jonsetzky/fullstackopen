@@ -24,22 +24,23 @@ const CreateBlog = () => {
         url,
       }),
     );
-    await dispatch(
-      setNotification(`a new blog "${title}" by ${author} added successfully`),
-    );
     setTitle("");
     setAuthor("");
     setUrl("");
+    setShow(false);
+    await dispatch(
+      setNotification(`a new blog "${title}" by ${author} added successfully`),
+    );
   };
 
   return (
     <div>
       {!show ? (
-        <></>
+        <button onClick={() => setShow(true)}>{"+ Add"}</button>
       ) : (
-        <div>
-          <h1>create new blog</h1>
-          <form onSubmit={handleBlogCreate}>
+        <form onSubmit={handleBlogCreate}>
+          <div className="flex flex-col gap-4">
+            <h1 className="text-xl">Create a new blog</h1>
             <TextInput
               labelClassName="w-20"
               id="blog-title"
@@ -64,13 +65,13 @@ const CreateBlog = () => {
               value={url}
               setValue={setUrl}
             />
-            <button type="submit">create</button>
-          </form>
-        </div>
+            <div className="flex w-full">
+              <button type="submit">Create</button>
+              <button onClick={() => setShow(false)}>Cancel</button>
+            </div>
+          </div>
+        </form>
       )}
-      <button onClick={() => setShow(!show)}>
-        {show ? "cancel" : "create new blog"}
-      </button>
     </div>
   );
 };
