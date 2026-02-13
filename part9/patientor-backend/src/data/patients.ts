@@ -45,25 +45,16 @@ let data: Patient[] = [
     gender: Gender.Male,
     occupation: "Digital evangelist",
   },
-].map((p) => ({
-  ...p,
-  gender: genderFromString(p.gender),
-}));
+];
 
-export function genderFromString(gender: string): Gender {
-  if (gender === "female") return Gender.Female;
-  if (gender === "male") return Gender.Male;
-  return Gender.Other;
-}
-
-export type Patient = {
+export interface Patient {
   id: string;
   name: string;
   dateOfBirth: string;
   ssn: string;
   gender: Gender;
   occupation: string;
-};
+}
 
 export type NonSensitivePatient = Omit<Patient, "ssn">;
 
