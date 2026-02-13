@@ -10,7 +10,7 @@ const LinkWrapper = (props) => {
       to={props.to}
       className={
         (props.className || "") +
-        " select-none " +
+        " select-none flex items-center justify-center text-center " +
         (path.pathname === props.to ? "underline" : "")
       }
     >
@@ -36,7 +36,7 @@ export const Navigation = () => {
       <LinkWrapper to="/">blogs</LinkWrapper>
       <LinkWrapper to="/users">users</LinkWrapper>
       <div style={{ flex: 1 }} />
-      <div className="flex gap-2 select-none">
+      <div className="flex gap-2 select-none items-center justify-center text-center">
         Logged in as {localUser.name || localUser.username}
         <button
           className="border rounded-sm bg-red-800 text-white border-red-800 hover:text-black hover:bg-red-700 hover:border-red-700"
