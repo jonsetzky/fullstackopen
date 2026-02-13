@@ -1,4 +1,4 @@
-const data = [
+const data: Diagnosis[] = [
   {
     code: "M24.2",
     name: "Disorder of ligament",
@@ -75,5 +75,11 @@ const data = [
     latin: "Alia retinopathia proliferativa",
   },
 ];
+
+export type Diagnosis = {
+  code: `${string}${number}`;
+  name: string;
+  latin?: string;
+};
 
 export default data;
