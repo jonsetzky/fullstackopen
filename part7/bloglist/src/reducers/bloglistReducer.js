@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import blogs from "../services/blogs";
+import blogService from "../services/blogs";
 
 /**
  * @typedef {{
@@ -61,7 +61,7 @@ const { set, setAll, del } = bloglistSlice.actions;
 
 export const initializeBlogs = () => {
   return async (dispatch) => {
-    const newBlogs = await blogs.getAll();
+    const newBlogs = await blogService.getAll();
     console.log("initialized blogs with", newBlogs);
     dispatch(setAll(newBlogs));
   };
@@ -72,7 +72,7 @@ export const initializeBlogs = () => {
  */
 export const createBlog = (newBlog) => {
   return async (dispatch, getState) => {
-    const createdBlog = await blogs.create(newBlog);
+    const createdBlog = await blogService.create(newBlog);
 
     const { token: _, ...user } = getState().localUser;
     const fullUser = getState().users.find((u) => u.id === user.id);
@@ -92,7 +92,7 @@ export const updateBlog = (id, newBlog) => {
     delete newBlog["id"];
     delete newBlog["user"];
 
-    const updatedBlog = await blogs.update(id, newBlog);
+    const updatedBlog = await blogService.update(id, newBlog);
     dispatch(set({ ...updatedBlog, user: oldBlog.user }));
   };
 };
@@ -103,7 +103,7 @@ export const updateBlog = (id, newBlog) => {
  */
 export const removeBlog = (id) => {
   return async (dispatch) => {
-    await blogs.remove(id);
+    await blogService.remove(id);
     dispatch(del(id));
   };
 };
@@ -122,6 +122,20 @@ export const likeBlog = (id) => {
         likes: blog.likes + 1,
       }),
     );
+  };
+};
+
+export const commentBlog = (id, comment) => {
+  return async (dispatch, getState) => {
+    let blog = getState().bloglist[id];
+
+    if (!blog) {
+      throw new Error("trying to comment a blog that doesn't exist in state");
+    }
+
+    const newBlog = await blogService.comment(id, comment);
+
+    await dispatch(set({ ...blog, comments: newBlog.comments }));
   };
 };
 
