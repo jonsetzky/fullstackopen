@@ -1,10 +1,11 @@
-const TextInput = ({ id, label, value, setValue }) => {
+const TextInput = ({ id, label, value, setValue, type, labelClassName }) => {
   return (
-    <div>
-      {label}
+    <div className="flex gap-2">
+      <span className={labelClassName}>{label}</span>
       <input
+        className="border-b outline-0"
         id={id}
-        type="text"
+        type={type || "text"}
         value={value}
         name={label}
         onChange={({ target }) => setValue(target.value)}

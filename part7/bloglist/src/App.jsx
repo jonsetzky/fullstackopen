@@ -17,6 +17,7 @@ import { Users } from "./components/routes/Users";
 import { UserDetails } from "./components/routes/UserDetails";
 import { BlogDetails } from "./components/routes/BlogDetails";
 import { Navigation } from "./components/Navigation";
+import TextInput from "./components/TextInput";
 
 const App = () => {
   const dispatch = useDispatch();
@@ -68,38 +69,21 @@ const App = () => {
                 className="flex flex-col gap-0
               "
               >
-                <div className="flex gap-2">
-                  <span
-                    className="w-20
-                "
-                  >
-                    username
-                  </span>
-                  <input
-                    className="border-b outline-0"
-                    id="username"
-                    type="text"
-                    value={username}
-                    name="Username"
-                    onChange={({ target }) => setUsername(target.value)}
-                  />
-                </div>
-                <div className="flex gap-2">
-                  <span
-                    className="w-20
-                "
-                  >
-                    password
-                  </span>
-                  <input
-                    className="border-b outline-0"
-                    id="password"
-                    type="password"
-                    value={password}
-                    name="Password"
-                    onChange={({ target }) => setPassword(target.value)}
-                  />
-                </div>
+                <TextInput
+                  labelClassName="w-20"
+                  id="username"
+                  label="username"
+                  value={username}
+                  setValue={setUsername}
+                />
+                <TextInput
+                  labelClassName="w-20"
+                  id="password"
+                  type="password"
+                  label="password"
+                  value={password}
+                  setValue={setPassword}
+                />
               </div>
               <button className="border rounded-sm p-2" type="submit">
                 Log In
