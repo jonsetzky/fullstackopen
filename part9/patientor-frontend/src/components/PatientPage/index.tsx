@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Patient } from "../../types";
 import patientService from "../../services/patients";
 import { useParams } from "react-router-dom";
+import { Entry } from "./Entry";
 
 const PatientPage = () => {
   const params = useParams();
@@ -38,6 +39,10 @@ const PatientPage = () => {
           </tr>
         </tbody>
       </table>
+      <h3>entries</h3>
+      {patient.entries.map((entry) => (
+        <Entry key={entry.id} entry={entry} />
+      ))}
     </div>
   );
 };
