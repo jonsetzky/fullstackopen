@@ -4,3 +4,5 @@ export interface DiaryData {
   weather: "rainy" | "sunny" | "cloudy" | "stormy" | "windy";
   visibility: "great" | "good" | "ok" | "poor";
 }
+
+export type NewDiaryData = Omit<DiaryData, "id"> & { comment: string };
