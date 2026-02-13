@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import { Patient } from "../../types";
+import { Diagnosis, Patient } from "../../types";
 import patientService from "../../services/patients";
 import { useParams } from "react-router-dom";
 import { Entry } from "./Entry";
 
-const PatientPage = () => {
+const PatientPage = ({ diagnoses }: { diagnoses?: Diagnosis[] }) => {
   const params = useParams();
   const [patient, setPatient] = useState<Patient>();
 
@@ -41,7 +41,7 @@ const PatientPage = () => {
       </table>
       <h3>entries</h3>
       {patient.entries.map((entry) => (
-        <Entry key={entry.id} entry={entry} />
+        <Entry key={entry.id} entry={entry} diagnoses={diagnoses} />
       ))}
     </div>
   );
