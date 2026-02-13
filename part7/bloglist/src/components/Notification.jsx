@@ -7,7 +7,7 @@ export const Notification = () => {
   if (notification === null) return <></>;
   return (
     <div
-      className="absolute top-32 p-2.5 rounded-md border-solid text-xl bg-gray-200"
+      className="absolute p-2.5 border-solid text-xl bg-gray-100 rounded-b-md"
       style={{
         color: notification.isError ? "red" : "green",
       }}

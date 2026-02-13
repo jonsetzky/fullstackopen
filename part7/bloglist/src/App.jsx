@@ -59,38 +59,53 @@ const App = () => {
       <div className="flex w-screen h-screen justify-center place-content-center">
         <div className="flex-1" />
         <div className="flex flex-col ">
-          <div className="flex-1" />
-          <div className="flex flex-col relative">
-            <Notification />
-            <h1 className="text-3xl">log in to application</h1>
-            <form onSubmit={handleLogin}>
-              <div>
-                username
-                <input
-                  className="border"
-                  id="username"
-                  type="text"
-                  value={username}
-                  name="Username"
-                  onChange={({ target }) => setUsername(target.value)}
-                />
+          <div className="flex-1 " />
+          <Notification />
+          <form onSubmit={handleLogin}>
+            <div className="flex flex-col gap-6">
+              <h1 className="text-3xl">Log In</h1>
+              <div
+                className="flex flex-col gap-0
+              "
+              >
+                <div className="flex gap-2">
+                  <span
+                    className="w-20
+                "
+                  >
+                    username
+                  </span>
+                  <input
+                    className="border-b outline-0"
+                    id="username"
+                    type="text"
+                    value={username}
+                    name="Username"
+                    onChange={({ target }) => setUsername(target.value)}
+                  />
+                </div>
+                <div className="flex gap-2">
+                  <span
+                    className="w-20
+                "
+                  >
+                    password
+                  </span>
+                  <input
+                    className="border-b outline-0"
+                    id="password"
+                    type="password"
+                    value={password}
+                    name="Password"
+                    onChange={({ target }) => setPassword(target.value)}
+                  />
+                </div>
               </div>
-              <div>
-                password
-                <input
-                  className="border"
-                  id="password"
-                  type="password"
-                  value={password}
-                  name="Password"
-                  onChange={({ target }) => setPassword(target.value)}
-                />
-              </div>
-              <button className="border" type="submit">
-                login
+              <button className="border rounded-sm p-2" type="submit">
+                Log In
               </button>
-            </form>
-          </div>
+            </div>
+          </form>
           <div className="flex-1" />
         </div>
         <div className="flex-1" />
