@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { jwtDecode } from "jwt-decode";
 
 import loginService from "../services/login";
 
@@ -27,6 +28,13 @@ export const reloadSession = () => {
     const loggedUserJSON = window.localStorage.getItem("loggedBlogUser");
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON);
+
+      const decodedToken = jwtDecode(user.token);
+      if (Date.now() >= decodedToken.exp * 1000) {
+        window.localStorage.removeItem("loggedBlogUser");
+        return;
+      }
+
       dispatch(set(user));
     }
   };
