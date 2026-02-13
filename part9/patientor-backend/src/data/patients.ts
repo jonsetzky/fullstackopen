@@ -1,8 +1,4 @@
-export enum Gender {
-  Male = "male",
-  Female = "female",
-  Other = "other",
-}
+import { Gender, NonSensitivePatient, Patient } from "../types";
 
 let data: Patient[] = [
   {
@@ -46,17 +42,6 @@ let data: Patient[] = [
     occupation: "Digital evangelist",
   },
 ];
-
-export interface Patient {
-  id: string;
-  name: string;
-  dateOfBirth: string;
-  ssn: string;
-  gender: Gender;
-  occupation: string;
-}
-
-export type NonSensitivePatient = Omit<Patient, "ssn">;
 
 export const getNonSensitivePatients = (): NonSensitivePatient[] => {
   return data.map((p) => {

@@ -1,5 +1,5 @@
 import z from "zod";
-import { Gender } from "../data/patients";
+import { Gender } from "../types";
 
 const newPatientSchema = z.object({
   name: z.string(),
