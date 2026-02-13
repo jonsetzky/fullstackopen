@@ -1,3 +1,5 @@
+import process from "node:process";
+
 const DESCRIPTIONS = [
   "could be better",
   "not too bad but could be better",
@@ -21,4 +23,17 @@ const calculateExercises = (dailyHours: number[], target: number) => {
   };
 };
 
-console.log(calculateExercises([3, 0, 2, 4.5, 0, 3, 1], 2));
+if (process.argv.length < 4) {
+  console.log("please input at least two numbers");
+  process.exit(1);
+}
+
+if (process.argv.slice(2).map(Number.parseFloat).find(isNaN) !== undefined) {
+  console.log("please input only numbers");
+  process.exit(1);
+}
+
+const target = Number(process.argv[2]);
+let dailyHours: number[] = process.argv.slice(3).map(Number);
+
+console.log(calculateExercises(dailyHours, target));
