@@ -15,7 +15,7 @@ const App = () => {
   return (
     <div>
       {diaries.map((diary) => (
-        <Diary diary={diary} />
+        <Diary key={diary.id} diary={diary} />
       ))}
     </div>
   );
