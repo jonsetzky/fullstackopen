@@ -23,17 +23,19 @@ const calculateExercises = (dailyHours: number[], target: number) => {
   };
 };
 
-if (process.argv.length < 4) {
-  console.log("please input at least two numbers");
-  process.exit(1);
+if (require.main === module) {
+  if (process.argv.length < 4) {
+    console.log("please input at least two numbers");
+    process.exit(1);
+  }
+
+  if (process.argv.slice(2).map(Number.parseFloat).find(isNaN) !== undefined) {
+    console.log("please input only numbers");
+    process.exit(1);
+  }
+
+  const target = Number(process.argv[2]);
+  let dailyHours: number[] = process.argv.slice(3).map(Number);
+
+  console.log(calculateExercises(dailyHours, target));
 }
-
-if (process.argv.slice(2).map(Number.parseFloat).find(isNaN) !== undefined) {
-  console.log("please input only numbers");
-  process.exit(1);
-}
-
-const target = Number(process.argv[2]);
-let dailyHours: number[] = process.argv.slice(3).map(Number);
-
-console.log(calculateExercises(dailyHours, target));
