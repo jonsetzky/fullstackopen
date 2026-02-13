@@ -1,6 +1,6 @@
 import React from "react";
 import { useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 
 export const UserDetails = () => {
   const id = useParams().id;
@@ -9,12 +9,16 @@ export const UserDetails = () => {
   if (!user) return <div>loading...</div>;
 
   return (
-    <div>
-      <h1>{user.username}</h1>
-      <h2>added blogs</h2>
+    <div className="p-7 flex flex-col">
+      <h1>
+        {user.name}
+        <span className="text-sm select-none">'s blogs</span>
+      </h1>
       <ul>
         {user.blogs.map((blog) => (
-          <li key={blog.id}>{blog.title}</li>
+          <li key={blog.id}>
+            - <Link to={`/blogs/${blog.id}`}>{blog.title}</Link>
+          </li>
         ))}
       </ul>
     </div>

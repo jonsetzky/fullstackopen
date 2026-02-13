@@ -13,4 +13,11 @@
     outline-style: var(--tw-outline-style);
     outline-width: 0px;
   }
+  h1 {
+    font-size: var(--text-xl);
+    line-height: var(--tw-leading, var(--text-xl--line-height));
+  }
+  a {
+    color: var(--color-blue-700);
+  }
 }

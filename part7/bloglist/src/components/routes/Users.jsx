@@ -6,12 +6,12 @@ export const Users = () => {
   const users = useSelector((state) => state.users);
 
   return (
-    <div>
+    <div className="p-7">
       <table>
         <thead>
           <tr>
-            <th>username</th>
-            <th>blogs created</th>
+            <th className="w-32 text-left">username</th>
+            <th className="w-32 text-left">blogs created</th>
           </tr>
         </thead>
         <tbody>

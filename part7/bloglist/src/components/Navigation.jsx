@@ -10,7 +10,7 @@ const LinkWrapper = (props) => {
       to={props.to}
       className={
         (props.className || "") +
-        " select-none flex items-center justify-center text-center " +
+        " text-black select-none flex items-center justify-center text-center " +
         (path.pathname === props.to ? "underline" : "")
       }
     >
