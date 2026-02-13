@@ -40,8 +40,12 @@ const PatientPage = ({ diagnoses }: { diagnoses?: Diagnosis[] }) => {
         </tbody>
       </table>
       <h3>entries</h3>
+
       {patient.entries.map((entry) => (
-        <Entry key={entry.id} entry={entry} diagnoses={diagnoses} />
+        <>
+          <Entry key={entry.id} entry={entry} diagnoses={diagnoses} />
+          <hr />
+        </>
       ))}
     </div>
   );
