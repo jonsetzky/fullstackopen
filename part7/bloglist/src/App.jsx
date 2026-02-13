@@ -56,32 +56,43 @@ const App = () => {
 
   if (!localUser) {
     return (
-      <div>
-        <Notification />
-        <h1>log in to application</h1>
-        <form onSubmit={handleLogin}>
-          <div>
-            username
-            <input
-              id="username"
-              type="text"
-              value={username}
-              name="Username"
-              onChange={({ target }) => setUsername(target.value)}
-            />
-          </div>
-          <div>
-            password
-            <input
-              id="password"
-              type="password"
-              value={password}
-              name="Password"
-              onChange={({ target }) => setPassword(target.value)}
-            />
-          </div>
-          <button type="submit">login</button>
-        </form>
+      <div className="flex w-screen h-screen justify-center place-content-center">
+        <div className="flex-1" />
+        <div className="flex flex-col">
+          <Notification />
+          <div className="flex-1" />
+          <h1 className="text-3xl">log in to application</h1>
+          <form onSubmit={handleLogin}>
+            <div>
+              username
+              <input
+                className="border"
+                id="username"
+                type="text"
+                value={username}
+                name="Username"
+                onChange={({ target }) => setUsername(target.value)}
+              />
+            </div>
+            <div>
+              password
+              <input
+                className="border"
+                id="password"
+                type="password"
+                value={password}
+                name="Password"
+                onChange={({ target }) => setPassword(target.value)}
+              />
+            </div>
+            <button className="border" type="submit">
+              login
+            </button>
+          </form>
+
+          <div className="flex-1" />
+        </div>
+        <div className="flex-1" />
       </div>
     );
   }
