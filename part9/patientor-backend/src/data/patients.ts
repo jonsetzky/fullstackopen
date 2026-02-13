@@ -1,4 +1,4 @@
-const data = [
+const data: Patient[] = [
   {
     id: "d2773336-f723-11e9-8f0b-362b9e155667",
     name: "John McClane",
@@ -40,5 +40,23 @@ const data = [
     occupation: "Digital evangelist",
   },
 ];
+
+export type Patient = {
+  id: `${string}-${string}-${string}-${string}-${string}`;
+  name: `${string} ${string}`;
+  dateOfBirth: `${number}-${number}-${number}`;
+  ssn: `${string}-${string}`;
+  gender: string;
+  occupation: string;
+};
+
+export type NonSensitivePatient = Omit<Patient, "ssn">;
+
+export const getNonSensitivePatients = (): NonSensitivePatient[] => {
+  return data.map((p) => {
+    const { ssn, ...np } = p;
+    return np;
+  });
+};
 
 export default data;
