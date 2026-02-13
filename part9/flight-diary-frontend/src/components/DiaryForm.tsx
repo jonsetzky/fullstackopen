@@ -1,31 +1,46 @@
 import React, { useState } from "react";
 import { useField } from "../hooks";
 import diaryService from "../services/diary";
-import type { DiaryData } from "../types";
+import { visibilityOptions, weatherOptions, type DiaryData } from "../types";
 import axios from "axios";
 
 export const DiaryForm = () => {
-  const { reset: resetDate, ...date } = useField("text");
-  const { reset: resetVisibility, ...visibility } = useField("text");
-  const { reset: resetWeather, ...weather } = useField("text");
+  const { reset: resetDate, ...date } = useField("date");
+  const [visibility, setVisibility] = useState<DiaryData["visibility"]>();
+  const [weather, setWeather] = useState<DiaryData["weather"]>();
+
   const { reset: resetComment, ...comment } = useField("text");
   const [error, setError] = useState("");
 
   const reset = () => {
     resetDate();
-    resetVisibility();
-    resetWeather();
+    setVisibility(undefined);
+    setWeather(undefined);
     resetComment();
   };
 
   const submit: React.SubmitEventHandler<HTMLFormElement> = async (event) => {
     event.preventDefault();
+    if (date.value.length === 0) {
+      setError("a date must be selected");
+      return;
+    }
+    if (!visibility) {
+      setError("visibility must be selected");
+      return;
+    }
+    if (!weather) {
+      setError("weather must be selected");
+      return;
+    }
+
+    // return;
     try {
       await diaryService.create({
         comment: comment.value,
         date: date.value,
-        visibility: visibility.value as DiaryData["visibility"], // todo validate
-        weather: weather.value as DiaryData["weather"], // todo validate
+        visibility: visibility,
+        weather: weather,
       });
       reset();
     } catch (error: unknown) {
@@ -55,10 +70,42 @@ export const DiaryForm = () => {
         date <input {...date} />
       </div>
       <div>
-        visibility <input {...visibility} />
+        visibility{" "}
+        <select
+          name="visibility"
+          onChange={(evt) =>
+            setVisibility(
+              evt.target.value === "none" ? undefined : evt.target.value,
+            )
+          }
+          value={visibility || "none"}
+        >
+          <option value={"none"}></option>
+          {visibilityOptions.map((opt) => (
+            <option value={opt} key={opt}>
+              {opt}
+            </option>
+          ))}
+        </select>
       </div>
       <div>
-        weather <input {...weather} />
+        weather{" "}
+        <select
+          name="weather"
+          onChange={(evt) =>
+            setWeather(
+              evt.target.value === "none" ? undefined : evt.target.value,
+            )
+          }
+          value={weather || "none"}
+        >
+          <option value={"none"}></option>
+          {weatherOptions.map((opt) => (
+            <option value={opt} key={opt}>
+              {opt}
+            </option>
+          ))}
+        </select>
       </div>
       <div>
         comment <input {...comment} />
