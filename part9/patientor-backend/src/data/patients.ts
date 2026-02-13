@@ -48,11 +48,15 @@ let data: Patient[] = [
   },
 ];
 
+export const toNonSensitivePatient = (
+  patient: Patient,
+): NonSensitivePatient => {
+  const { ssn, entries, ...np } = patient;
+  return np;
+};
+
 export const getNonSensitivePatients = (): NonSensitivePatient[] => {
-  return data.map((p) => {
-    const { ssn, ...np } = p;
-    return np;
-  });
+  return data.map(toNonSensitivePatient);
 };
 
 export default data;
