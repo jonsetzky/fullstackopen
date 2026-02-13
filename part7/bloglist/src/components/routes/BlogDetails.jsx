@@ -28,6 +28,12 @@ export const BlogDetails = () => {
         </button>
       </p>
       <p>added by {blog?.user?.name || "n/a"}</p>
+      <h3>comments</h3>
+      <ul>
+        {blog.comments.map((comment, i) => (
+          <li key={i}>{comment}</li>
+        ))}
+      </ul>
     </div>
   );
 };

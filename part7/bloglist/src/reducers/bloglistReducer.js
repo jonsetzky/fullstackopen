@@ -2,12 +2,14 @@ import { createSlice } from "@reduxjs/toolkit";
 import blogs from "../services/blogs";
 
 /**
- * @typedef {{title: string,
- *     author:string,
- *     url:string,
- *     likes:number,
- *     user:string,
- *     id:string
+ * @typedef {{
+ *    title: string,
+ *    author: string,
+ *    url: string,
+ *    likes: number,
+ *    user: string,
+ *    id: string
+ *    comments: string[]
  *  }} Blog
  * @typedef {{[key: string]: Blog}} BloglistState
  */
