@@ -1,7 +1,12 @@
-import express, { Response } from "express";
+import express, { Request, Response } from "express";
 import cors from "cors";
+import { v4 as uuid } from "uuid";
 import diagnoses, { Diagnosis } from "./data/diagnoses";
-import { getNonSensitivePatients, NonSensitivePatient } from "./data/patients";
+import patients, {
+  getNonSensitivePatients,
+  NonSensitivePatient,
+  Patient,
+} from "./data/patients";
 
 const app = express();
 
@@ -18,6 +23,11 @@ app.get("/api/diagnoses", (_req, res: Response<Diagnosis[]>) => {
 
 app.get("/api/patients", (_req, res: Response<NonSensitivePatient[]>) => {
   res.json(getNonSensitivePatients());
+});
+
+app.post("/api/patients", (req: Request<Omit<Patient, "id">>, res) => {
+  patients.push({ ...req.body, id: uuid() });
+  res.status(200).json({ success: "patient added" });
 });
 
 const PORT = 3001;
