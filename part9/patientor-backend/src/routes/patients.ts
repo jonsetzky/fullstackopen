@@ -18,6 +18,7 @@ router.post("/", (req, res) => {
     patients.push({
       ...newPatient,
       id: uuid(),
+      entries: [], // todo?
     });
     res.status(200).json({ success: "patient added" });
   } catch (error: unknown) {
