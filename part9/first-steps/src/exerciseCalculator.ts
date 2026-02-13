@@ -6,7 +6,7 @@ const DESCRIPTIONS = [
   "not too bad",
 ];
 
-const calculateExercises = (dailyHours: number[], target: number) => {
+export const calculateExercises = (dailyHours: number[], target: number) => {
   const success = dailyHours.find((hour) => hour < target) === undefined;
   const average =
     dailyHours.reduce((sum, curr) => sum + curr, 0) / dailyHours.length;
