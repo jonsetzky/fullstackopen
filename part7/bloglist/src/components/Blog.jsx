@@ -1,13 +1,6 @@
-import { useState } from "react";
-
-import { useDispatch, useSelector } from "react-redux";
-import { likeBlog, removeBlog } from "../reducers/bloglistReducer";
+import { Link } from "react-router-dom";
 
 const Blog = ({ blog }) => {
-  let dispatch = useDispatch();
-
-  const localUser = useSelector((state) => state.localUser);
-
   const blogStyle = {
     paddingTop: 10,
     paddingLeft: 2,
@@ -16,69 +9,12 @@ const Blog = ({ blog }) => {
     marginBottom: 5,
   };
 
-  const [showDetails, setShowDetails] = useState(false);
-
   return (
     <div className="blog" style={blogStyle}>
-      <i>{blog.title}</i> by {blog.author}
-      <button onClick={() => setShowDetails(!showDetails)}>
-        {showDetails ? "collapse" : "expand"}
-      </button>
-      {showDetails && (
-        <>
-          <table>
-            <tbody>
-              <tr>
-                <td>title</td>
-                <td>{blog.title}</td>
-              </tr>
-              <tr>
-                <td>author</td>
-                <td>{blog.author}</td>
-              </tr>
-              <tr>
-                <td>url</td>
-                <td>{blog.url}</td>
-              </tr>
-              <tr>
-                <td>likes</td>
-                <td>{blog.likes}</td>
-                <td>
-                  <button
-                    onClick={async () => {
-                      dispatch(likeBlog(blog.id));
-                    }}
-                  >
-                    like
-                  </button>
-                </td>
-              </tr>
-              <tr>
-                <td>user</td>
-                <td>{blog.user?.name || blog.user?.username || "n/a"}</td>
-              </tr>
-            </tbody>
-          </table>
-          {blog.user !== undefined &&
-          blog.user.id.toString() === localUser.id.toString() ? (
-            <button
-              onClick={async () => {
-                if (
-                  window.confirm(
-                    `remove blog "${blog.title}" by ${blog.author}?`,
-                  )
-                ) {
-                  dispatch(removeBlog(blog.id));
-                }
-              }}
-            >
-              remove
-            </button>
-          ) : (
-            <></>
-          )}
-        </>
-      )}
+      <i>
+        <Link to={`/blogs/${blog.id}`}>{blog.title}</Link>
+      </i>{" "}
+      by {blog.author}
     </div>
   );
 };

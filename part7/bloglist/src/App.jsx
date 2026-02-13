@@ -15,6 +15,7 @@ import { Blogs } from "./components/routes/Blogs";
 import { initializeUsers } from "./reducers/usersReducer";
 import { Users } from "./components/routes/Users";
 import { UserDetails } from "./components/routes/UserDetails";
+import { BlogDetails } from "./components/routes/BlogDetails";
 
 const App = () => {
   const dispatch = useDispatch();
@@ -99,6 +100,7 @@ const App = () => {
       </p>
       <Routes>
         <Route path="/" element={<Blogs />} />
+        <Route path="/blogs/:id" element={<BlogDetails />} />
         <Route path="/users" element={<Users />} />
         <Route path="/users/:id" element={<UserDetails />} />
       </Routes>
