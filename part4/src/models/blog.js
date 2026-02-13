@@ -19,6 +19,10 @@ const blogSchema = mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
     },
+    comments: {
+      type: [String],
+      default: [],
+    },
   },
   {
     collection: process.env.NODE_ENV === "test" ? "test_blogs" : "blogs",

@@ -60,4 +60,25 @@ blogsController.put("/:id", async (request, response) => {
   response.json(updatedBlog);
 });
 
+blogsController.post("/:id/comment", async (request, response) => {
+  if (!request.body?.comment)
+    return response.status(400).json({ error: '"comment" field is missing' });
+
+  if (typeof request.body.comment !== "string") {
+    return response
+      .status(400)
+      .json({ error: '"comment" field must be a string' });
+  }
+
+  const blog = await Blog.findById(request.params.id);
+
+  if (!blog) {
+    return response.status(404).json({ error: "blog not found" });
+  }
+
+  blog.comments.push(request.body.comment);
+
+  response.json(await blog.save());
+});
+
 module.exports = blogsController;
