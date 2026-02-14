@@ -10,7 +10,13 @@ import {
   SelectChangeEvent,
 } from "@mui/material";
 
-import { Diagnosis, EntryFormValues, Gender } from "../../../types";
+import {
+  Diagnosis,
+  EntryDetailsValues,
+  EntryFormValues,
+  EntryType,
+} from "../../../types";
+import { EntryDetailsForm } from "./EntryDetailsForm";
 
 interface Props {
   onCancel: () => void;
@@ -18,31 +24,30 @@ interface Props {
   diagnoses?: Diagnosis[];
 }
 
-const ALLOWED_TYPES = ["Hospital", "OccupationalHealthcare"] as const;
-
-const AddEntryForm = ({ onCancel, onSubmit }: Props) => {
-  const [type, setType] = useState<(typeof ALLOWED_TYPES)[number] | "">("");
+const EntryForm = ({ onCancel, onSubmit }: Props) => {
+  const [type, setType] = useState<EntryType>(EntryType.Hospital);
   const [date, setDate] = useState("");
   const [description, setDescription] = useState("");
   const [specialist, setSpecialist] = useState("");
   const [diagnosisCodes, setDiagnosisCodes] = useState<string[]>([]);
+
+  const [details, setDetails] = useState<EntryDetailsValues>();
 
   const onTypeChange = (event: SelectChangeEvent<string>) => {
     event.preventDefault();
     if (typeof event.target.value === "string") {
       const value = event.target.value;
 
-      const type = ALLOWED_TYPES.find(
-        (t) => t.toLowerCase() === value.toLowerCase(),
+      const type = Object.values(EntryType).find(
+        (t) => t.toString().toLowerCase() === value.toLowerCase(),
       );
       if (type) {
         setType(type);
       }
     }
   };
-  Object.values(Gender);
 
-  const addPatient = (event: SyntheticEvent) => {
+  const addEntry = (event: SyntheticEvent) => {
     event.preventDefault();
     if (!type) {
       console.log("todo handle"); // todo handle
@@ -54,15 +59,16 @@ const AddEntryForm = ({ onCancel, onSubmit }: Props) => {
       diagnosisCodes,
       specialist,
       type,
+      ...details,
     });
   };
 
   return (
     <div>
-      <form onSubmit={addPatient}>
+      <form onSubmit={addEntry}>
         <InputLabel>General</InputLabel>
         <TextField
-          label="Date of birth"
+          label="Date"
           placeholder="YYYY-MM-DD"
           fullWidth
           value={date}
@@ -88,15 +94,24 @@ const AddEntryForm = ({ onCancel, onSubmit }: Props) => {
             setDiagnosisCodes(target.value.split(",").map((s) => s.trim()))
           }
         />
-
         <InputLabel style={{ marginTop: 20 }}>Healthcare</InputLabel>
         <Select label="Type" fullWidth value={type} onChange={onTypeChange}>
-          {ALLOWED_TYPES.map((option) => (
-            <MenuItem key={option} value={option}>
-              {option}
+          {Object.values(EntryType).map((option) => (
+            <MenuItem key={option.toString()} value={option.toString()}>
+              {option.toString()}
             </MenuItem>
           ))}
         </Select>
+        <div style={{ height: "0.5em" }}></div>
+        <EntryDetailsForm
+          type={type}
+          onCancel={() => {
+            setDetails(undefined);
+          }}
+          onChange={(v) => {
+            setDetails(v);
+          }}
+        />
 
         <Grid>
           <Grid item>
@@ -127,4 +142,4 @@ const AddEntryForm = ({ onCancel, onSubmit }: Props) => {
   );
 };
 
-export default AddEntryForm;
+export default EntryForm;

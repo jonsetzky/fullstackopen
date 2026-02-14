@@ -8,20 +8,24 @@ export const Entry = ({
   entry: EntryData;
   diagnoses?: Diagnosis[];
 }) => {
+  const getDiagnosis = (code: string, i: number) => (
+    <li key={i}>
+      {code}{" "}
+      {!diagnoses
+        ? "loading..."
+        : diagnoses.find((dg) => dg.code === code)?.name || ""}
+    </li>
+  );
+
   return (
     <div style={{ display: "flex" }}>
       <div style={{ flex: 1 }}>
         {entry.date} {entry.description}
-        <ul>
-          {entry.diagnosisCodes.map((code, i) => (
-            <li key={i}>
-              {code}{" "}
-              {!diagnoses
-                ? "loading..."
-                : diagnoses.find((dg) => dg.code === code)?.name || ""}
-            </li>
-          ))}
-        </ul>
+        {entry.diagnosisCodes ? (
+          <ul>{entry.diagnosisCodes.map(getDiagnosis)}</ul>
+        ) : (
+          <></>
+        )}
         diagnose by {entry.specialist}
       </div>
       <div style={{ flex: 1 }}>

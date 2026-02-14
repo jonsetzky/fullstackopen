@@ -5,6 +5,7 @@ import { useParams } from "react-router-dom";
 import { Entry } from "./Entry";
 import AddEntryModal from "./AddEntryModal";
 import { Button } from "@mui/material";
+import axios from "axios";
 
 const PatientPage = ({ diagnoses }: { diagnoses?: Diagnosis[] }) => {
   const params = useParams();
@@ -20,8 +21,45 @@ const PatientPage = ({ diagnoses }: { diagnoses?: Diagnosis[] }) => {
     setError(undefined);
   };
 
-  const submitNewEntry = async (values: EntryFormValues) => {
-    console.log("values", values);
+  const submitNewEntry = async (value: EntryFormValues) => {
+    if (!patient) {
+      setError("cannot create an entry because patient is undefined");
+      return;
+    }
+
+    try {
+      const entry = await patientService.createEntry(patient.id, value);
+      setPatient({ ...patient, entries: patient.entries.concat(entry) });
+      setModalOpen(false);
+    } catch (e: unknown) {
+      if (axios.isAxiosError(e)) {
+        if (e?.response?.data && typeof e?.response?.data === "string") {
+          const message = e.response.data.replace(
+            "Something went wrong. Error: ",
+            "",
+          );
+          console.error(message);
+          setError(message);
+        } else if (
+          e.status === 400 &&
+          e.response &&
+          "data" in e.response &&
+          e.response.data.error === "zod validation error"
+        ) {
+          if (Array.isArray(e.response.data.issues)) {
+            const firstIssue = e.response.data.issues[0];
+            setError(`field "${firstIssue.path[0]}": ${firstIssue.message}`);
+          } else {
+            setError("Unrecognized zod validation error");
+          }
+        } else {
+          setError("Unrecognized axios error");
+        }
+      } else {
+        console.error("Unknown error", e);
+        setError("Unknown error");
+      }
+    }
   };
 
   useEffect(() => {

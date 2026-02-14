@@ -24,6 +24,11 @@ export type PatientFormValues = Omit<Patient, "id" | "entries">;
 
 export type Date = string;
 
+export enum EntryType {
+  Hospital = "Hospital",
+  Occupational = "OccupationalHealthcare",
+}
+
 export interface EntryBase {
   id: string;
   date: Date;
@@ -32,14 +37,14 @@ export interface EntryBase {
   description: string;
 }
 export interface HospitalEntry extends EntryBase {
-  type: "Hospital";
+  type: EntryType.Hospital;
   discharge: {
     date: Date;
     criteria: string;
   };
 }
 export interface OccupationalHealthcareEntry extends EntryBase {
-  type: "OccupationalHealthcare";
+  type: EntryType.Occupational;
   employerName: string;
   sickLeave: {
     startDate: Date;
@@ -50,3 +55,10 @@ export interface OccupationalHealthcareEntry extends EntryBase {
 export type Entry = OccupationalHealthcareEntry | HospitalEntry;
 
 export type EntryFormValues = Omit<Entry, "id">;
+
+export type EntryDetailsValues = Omit<Entry, keyof EntryBase | "id">;
+
+export type OccupationalHealthcareValues = Omit<
+  OccupationalHealthcareEntry,
+  keyof EntryBase | "type"
+>;
