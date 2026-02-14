@@ -48,3 +48,5 @@ export interface OccupationalHealthcareEntry extends EntryBase {
 }
 
 export type Entry = OccupationalHealthcareEntry | HospitalEntry;
+
+export type EntryFormValues = Omit<Entry, "id">;
