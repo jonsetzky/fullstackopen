@@ -1,12 +1,28 @@
 import { useEffect, useState } from "react";
-import { Diagnosis, Patient } from "../../types";
+import { Diagnosis, EntryFormValues, Patient } from "../../types";
 import patientService from "../../services/patients";
 import { useParams } from "react-router-dom";
 import { Entry } from "./Entry";
+import AddEntryModal from "./AddEntryModal";
+import { Button } from "@mui/material";
 
 const PatientPage = ({ diagnoses }: { diagnoses?: Diagnosis[] }) => {
   const params = useParams();
   const [patient, setPatient] = useState<Patient>();
+
+  const [modalOpen, setModalOpen] = useState<boolean>(false);
+  const [error, setError] = useState<string>();
+
+  const openModal = (): void => setModalOpen(true);
+
+  const closeModal = (): void => {
+    setModalOpen(false);
+    setError(undefined);
+  };
+
+  const submitNewEntry = async (values: EntryFormValues) => {
+    console.log("values", values);
+  };
 
   useEffect(() => {
     (async () => {
@@ -40,12 +56,22 @@ const PatientPage = ({ diagnoses }: { diagnoses?: Diagnosis[] }) => {
         </tbody>
       </table>
       <h3>entries</h3>
-
+      <AddEntryModal
+        modalOpen={modalOpen}
+        onSubmit={submitNewEntry}
+        error={error}
+        onClose={closeModal}
+        diagnoses={diagnoses}
+      />
+      <Button variant="contained" onClick={() => openModal()}>
+        Add Entry
+      </Button>
+      <div style={{ height: "1em" }}></div>
       {patient.entries.map((entry) => (
-        <>
-          <Entry key={entry.id} entry={entry} diagnoses={diagnoses} />
+        <div key={entry.id}>
+          <Entry entry={entry} diagnoses={diagnoses} />
           <hr />
-        </>
+        </div>
       ))}
     </div>
   );
