@@ -1,4 +1,4 @@
-import { useState, SyntheticEvent } from "react";
+import { useState, SyntheticEvent, useMemo } from "react";
 
 import {
   TextField,
@@ -24,14 +24,50 @@ interface Props {
   diagnoses?: Diagnosis[];
 }
 
-const EntryForm = ({ onCancel, onSubmit }: Props) => {
+interface DiagnosisOption {
+  value: string;
+  label: string;
+}
+const diagnosisOption = (d: Diagnosis): DiagnosisOption => ({
+  value: d.code,
+  label: `${d.code}: ${d.name}`,
+});
+
+const EntryForm = ({ onCancel, onSubmit, diagnoses }: Props) => {
   const [type, setType] = useState<EntryType>(EntryType.Hospital);
   const [date, setDate] = useState("");
   const [description, setDescription] = useState("");
   const [specialist, setSpecialist] = useState("");
-  const [diagnosisCodes, setDiagnosisCodes] = useState<string[]>([]);
+  const [diagnosisCodes, setDiagnosisCodes] = useState<DiagnosisOption[]>([]);
 
   const [details, setDetails] = useState<EntryDetailsValues>();
+
+  const allowedDiagnoses = useMemo<DiagnosisOption[]>(
+    () => diagnoses?.map(diagnosisOption) || [],
+    [diagnoses],
+  );
+
+  const diagnosisOptionFromCode = (
+    code: string,
+  ): DiagnosisOption | undefined => {
+    const diagnosis = diagnoses?.find((d) => d.code === code);
+    if (!diagnosis) return;
+    return diagnosisOption(diagnosis);
+  };
+
+  const onDiagnosesChange = (event: SelectChangeEvent<string[]>) => {
+    event.preventDefault();
+
+    if (typeof event.target.value === "string") {
+      return;
+    }
+
+    setDiagnosisCodes(
+      event.target.value
+        .map(diagnosisOptionFromCode)
+        .filter((d) => d !== undefined),
+    );
+  };
 
   const onTypeChange = (event: SelectChangeEvent<string>) => {
     event.preventDefault();
@@ -49,14 +85,10 @@ const EntryForm = ({ onCancel, onSubmit }: Props) => {
 
   const addEntry = (event: SyntheticEvent) => {
     event.preventDefault();
-    if (!type) {
-      console.log("todo handle"); // todo handle
-      return;
-    }
     onSubmit({
       date,
       description,
-      diagnosisCodes,
+      diagnosisCodes: diagnosisCodes.map((d) => d.value),
       specialist,
       type,
       ...details,
@@ -86,14 +118,22 @@ const EntryForm = ({ onCancel, onSubmit }: Props) => {
           value={specialist}
           onChange={({ target }) => setSpecialist(target.value)}
         />
-        <TextField
-          label="Diagnosis codes (comma separated)"
+        <InputLabel style={{ marginTop: 20 }}>Diagnoses</InputLabel>
+        <Select<string[]>
+          multiple
           fullWidth
-          value={diagnosisCodes}
-          onChange={({ target }) =>
-            setDiagnosisCodes(target.value.split(",").map((s) => s.trim()))
-          }
-        />
+          value={diagnosisCodes.map((d) => d.value)}
+          renderValue={(selected) => selected.join(", ")}
+          onChange={onDiagnosesChange}
+        >
+          {allowedDiagnoses
+            .sort((a, b) => a.value.localeCompare(b.value))
+            .map((option) => (
+              <MenuItem key={option.value} value={option.value}>
+                {option.label}
+              </MenuItem>
+            ))}
+        </Select>
         <InputLabel style={{ marginTop: 20 }}>Healthcare</InputLabel>
         <Select label="Type" fullWidth value={type} onChange={onTypeChange}>
           {Object.values(EntryType).map((option) => (
