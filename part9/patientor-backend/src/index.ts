@@ -23,6 +23,8 @@ app.use("/api/patients", patientRouter);
 app.use((err: Error, _req: Request, res: Response, next: NextFunction) => {
   if (err instanceof z.ZodError) {
     res.status(400).json({ error: "zod validation error", issues: err.issues });
+  } else if (err instanceof SyntaxError) {
+    res.status(400).json({ error: "invalid json" });
   } else {
     next(err);
   }
