@@ -1,11 +1,12 @@
 import express, { Response } from "express";
 import { v4 as uuid } from "uuid";
-import patients, { getNonSensitivePatients } from "../data/patients";
-import { toNewPatient } from "../validation/patient";
-import z from "zod";
+import patientsData, { getNonSensitivePatients } from "../data/patients";
+import { toNewEntry, toNewPatient } from "../validation/patient";
 import { NonSensitivePatient } from "../types";
 
 const router = express.Router();
+
+let patients = patientsData;
 
 router.get("/", (_req, res: Response<NonSensitivePatient[]>) => {
   res.json(getNonSensitivePatients());
@@ -24,24 +25,40 @@ router.get("/:id", (req, res) => {
 });
 
 router.post("/", (req, res) => {
-  try {
-    const newPatient = toNewPatient(req.body);
+  const newPatient = toNewPatient(req.body);
 
-    patients.push({
-      ...newPatient,
-      id: uuid(),
-      entries: [], // todo?
-    });
-    res.status(200).json({ success: "patient added" });
-  } catch (error: unknown) {
-    if (error instanceof z.ZodError) {
-      res
-        .status(400)
-        .json({ error: "zod validation error", issues: error.issues });
-    } else {
-      res.status(500).json({ error: "unknown error" });
-    }
+  patients.push({
+    ...newPatient,
+    id: uuid(),
+    entries: [], // todo?
+  });
+  res.status(200).json({ success: "patient added" });
+});
+
+router.post("/:id/entries", (req, res) => {
+  if (!req.body) {
+    res.status(400).send({ error: "body is missing" });
+    return;
   }
+  const id = req.params.id;
+
+  if (!patients.find((patient) => patient.id === id)) {
+    res.status(404).send({ error: "patient not found" });
+    return;
+  }
+
+  let newEntry = { ...toNewEntry(req.body), id: uuid() };
+
+  patients = patients.map((patient) => {
+    if (patient.id !== id) return patient;
+
+    return {
+      ...patient,
+      entries: [...patient.entries, newEntry],
+    };
+  });
+
+  res.status(200).json(newEntry);
 });
 
 export default router;
