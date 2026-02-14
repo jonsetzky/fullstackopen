@@ -31,7 +31,7 @@ const App = () => {
 
   return (
     <div className="App">
-      <Router>
+      <Router future={{ v7_relativeSplatPath: true, v7_startTransition: true }}>
         <Container>
           <Typography variant="h3" style={{ marginBottom: "0.5em" }}>
             Patientor
