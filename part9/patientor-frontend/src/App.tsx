@@ -10,6 +10,8 @@ import diangnosisService from "./services/diagnoses";
 import patientService from "./services/patients";
 import PatientListPage from "./components/PatientListPage";
 import PatientPage from "./components/PatientPage";
+import { LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
 const App = () => {
   const [patients, setPatients] = useState<Patient[]>([]);
@@ -31,32 +33,36 @@ const App = () => {
 
   return (
     <div className="App">
-      <Router future={{ v7_relativeSplatPath: true, v7_startTransition: true }}>
-        <Container>
-          <Typography variant="h3" style={{ marginBottom: "0.5em" }}>
-            Patientor
-          </Typography>
-          <Button component={Link} to="/" variant="contained" color="primary">
-            Home
-          </Button>
-          <Divider hidden />
-          <Routes>
-            <Route
-              path="/"
-              element={
-                <PatientListPage
-                  patients={patients}
-                  setPatients={setPatients}
-                />
-              }
-            />
-            <Route
-              path="/patients/:id"
-              element={<PatientPage diagnoses={diagnoses} />}
-            />
-          </Routes>
-        </Container>
-      </Router>
+      <LocalizationProvider dateAdapter={AdapterDayjs}>
+        <Router
+          future={{ v7_relativeSplatPath: true, v7_startTransition: true }}
+        >
+          <Container>
+            <Typography variant="h3" style={{ marginBottom: "0.5em" }}>
+              Patientor
+            </Typography>
+            <Button component={Link} to="/" variant="contained" color="primary">
+              Home
+            </Button>
+            <Divider hidden />
+            <Routes>
+              <Route
+                path="/"
+                element={
+                  <PatientListPage
+                    patients={patients}
+                    setPatients={setPatients}
+                  />
+                }
+              />
+              <Route
+                path="/patients/:id"
+                element={<PatientPage diagnoses={diagnoses} />}
+              />
+            </Routes>
+          </Container>
+        </Router>
+      </LocalizationProvider>
     </div>
   );
 };

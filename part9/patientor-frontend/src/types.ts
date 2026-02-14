@@ -1,3 +1,5 @@
+import { Dayjs } from "dayjs";
+
 export interface Diagnosis {
   code: string;
   name: string;
@@ -22,7 +24,7 @@ export interface Patient {
 
 export type PatientFormValues = Omit<Patient, "id" | "entries">;
 
-export type Date = string;
+export type Date = Dayjs;
 
 export enum EntryType {
   Hospital = "Hospital",
@@ -31,7 +33,7 @@ export enum EntryType {
 
 export interface EntryBase {
   id: string;
-  date: Date;
+  date: string;
   specialist: string;
   diagnosisCodes: string[];
   description: string;
@@ -39,7 +41,7 @@ export interface EntryBase {
 export interface HospitalEntry extends EntryBase {
   type: EntryType.Hospital;
   discharge: {
-    date: Date;
+    date: string;
     criteria: string;
   };
 }
@@ -47,8 +49,8 @@ export interface OccupationalHealthcareEntry extends EntryBase {
   type: EntryType.Occupational;
   employerName: string;
   sickLeave: {
-    startDate: Date;
-    endDate: Date;
+    startDate: string;
+    endDate: string;
   };
 }
 

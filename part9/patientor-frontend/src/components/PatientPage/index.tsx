@@ -100,6 +100,7 @@ const PatientPage = ({ diagnoses }: { diagnoses?: Diagnosis[] }) => {
         modalOpen={modalOpen}
         onSubmit={submitNewEntry}
         error={error}
+        setError={setError}
         onClose={closeModal}
         diagnoses={diagnoses}
       />

@@ -1,6 +1,8 @@
 import { InputLabel, TextField } from "@mui/material";
 import { EntryBase, OccupationalHealthcareEntry } from "../../../types";
 import { useEffect, useState } from "react";
+import { Dayjs } from "dayjs";
+import { DatePicker } from "@mui/x-date-pickers";
 
 export type OccupationalHealthcareFormValues = Omit<
   OccupationalHealthcareEntry,
@@ -8,20 +10,31 @@ export type OccupationalHealthcareFormValues = Omit<
 >;
 
 interface Props {
+  setError: React.Dispatch<React.SetStateAction<string | undefined>>;
   onChange: (value: OccupationalHealthcareFormValues) => void;
 }
 
-export const OccupationalHealthcareForm = ({ onChange }: Props) => {
+export const OccupationalHealthcareForm = ({ onChange, setError }: Props) => {
   const [employer, setEmployer] = useState("");
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
+  const [startDate, setStartDate] = useState<Dayjs | null>(null);
+  const [endDate, setEndDate] = useState<Dayjs | null>(null);
 
   useEffect(() => {
+    if (!endDate) {
+      setError("end date must be set for sick leave");
+      return;
+    } else if (!startDate) {
+      setError("start date must be set for sick leave");
+      return;
+    } else {
+      setError("");
+    }
+
     onChange({
       employerName: employer,
       sickLeave: {
-        endDate,
-        startDate,
+        endDate: endDate.format("YYYY-MM-DD"),
+        startDate: startDate.format("YYYY-MM-DD"),
       },
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -40,16 +53,15 @@ export const OccupationalHealthcareForm = ({ onChange }: Props) => {
         />
         <InputLabel>Sick Leave</InputLabel>
         <div style={{ display: "flex" }}>
-          <TextField
-            label="Start date"
-            placeholder="YYYY-MM-DD"
+          <DatePicker
+            label="Start Date"
             value={startDate}
-            onChange={({ target }) => setStartDate(target.value)}
+            onChange={(value) => setStartDate(value)}
           />
-          <TextField
-            label="End date"
+          <DatePicker
+            label="End Date"
             value={endDate}
-            onChange={({ target }) => setEndDate(target.value)}
+            onChange={(value) => setEndDate(value)}
           />
         </div>
       </div>

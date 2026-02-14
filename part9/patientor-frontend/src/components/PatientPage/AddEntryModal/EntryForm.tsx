@@ -17,8 +17,11 @@ import {
   EntryType,
 } from "../../../types";
 import { EntryDetailsForm } from "./EntryDetailsForm";
+import { DatePicker } from "@mui/x-date-pickers";
+import dayjs, { Dayjs } from "dayjs";
 
 interface Props {
+  setError: React.Dispatch<React.SetStateAction<string | undefined>>;
   onCancel: () => void;
   onSubmit: (values: EntryFormValues) => void;
   diagnoses?: Diagnosis[];
@@ -33,9 +36,9 @@ const diagnosisOption = (d: Diagnosis): DiagnosisOption => ({
   label: `${d.code}: ${d.name}`,
 });
 
-const EntryForm = ({ onCancel, onSubmit, diagnoses }: Props) => {
+const EntryForm = ({ onCancel, onSubmit, diagnoses, setError }: Props) => {
   const [type, setType] = useState<EntryType>(EntryType.Hospital);
-  const [date, setDate] = useState("");
+  const [date, setDate] = useState<Dayjs>(dayjs());
   const [description, setDescription] = useState("");
   const [specialist, setSpecialist] = useState("");
   const [diagnosisCodes, setDiagnosisCodes] = useState<DiagnosisOption[]>([]);
@@ -86,7 +89,7 @@ const EntryForm = ({ onCancel, onSubmit, diagnoses }: Props) => {
   const addEntry = (event: SyntheticEvent) => {
     event.preventDefault();
     onSubmit({
-      date,
+      date: date.format("YYYY-MM-DD"),
       description,
       diagnosisCodes: diagnosisCodes.map((d) => d.value),
       specialist,
@@ -99,12 +102,10 @@ const EntryForm = ({ onCancel, onSubmit, diagnoses }: Props) => {
     <div>
       <form onSubmit={addEntry}>
         <InputLabel>General</InputLabel>
-        <TextField
+        <DatePicker
           label="Date"
-          placeholder="YYYY-MM-DD"
-          fullWidth
           value={date}
-          onChange={({ target }) => setDate(target.value)}
+          onChange={(value) => (!value ? {} : setDate(value))}
         />
         <TextField
           label="Description"
@@ -144,6 +145,7 @@ const EntryForm = ({ onCancel, onSubmit, diagnoses }: Props) => {
         </Select>
         <div style={{ height: "0.5em" }}></div>
         <EntryDetailsForm
+          setError={setError}
           type={type}
           onCancel={() => {
             setDetails(undefined);

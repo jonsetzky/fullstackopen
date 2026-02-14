@@ -13,6 +13,7 @@ interface Props {
   modalOpen: boolean;
   onClose: () => void;
   onSubmit: (values: EntryFormValues) => void;
+  setError: React.Dispatch<React.SetStateAction<string | undefined>>;
   error?: string;
   diagnoses?: Diagnosis[];
 }
@@ -22,6 +23,7 @@ const AddEntryModal = ({
   onClose,
   onSubmit,
   error,
+  setError,
   diagnoses,
 }: Props) => {
   return (
@@ -31,6 +33,7 @@ const AddEntryModal = ({
       <DialogContent>
         {error && <Alert severity="error">{error}</Alert>}
         <EntryForm
+          setError={setError}
           onSubmit={onSubmit}
           onCancel={onClose}
           diagnoses={diagnoses}
