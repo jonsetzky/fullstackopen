@@ -1,6 +1,12 @@
-export const weatherOptions = ["rainy", "sunny", "cloudy", "stormy", "windy"];
+export const weatherOptions = [
+  "rainy",
+  "sunny",
+  "cloudy",
+  "stormy",
+  "windy",
+] as const;
 
-export const visibilityOptions = ["great", "good", "ok", "poor"];
+export const visibilityOptions = ["great", "good", "ok", "poor"] as const;
 
 export interface DiaryData {
   id: number;
